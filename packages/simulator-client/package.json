@@ -4,7 +4,7 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc -p .",
+    "build": "tsc --noImplicitUseStrict -p .",
     "dev": "yarn build && node dist/index.js"
   },
   "dependencies": {

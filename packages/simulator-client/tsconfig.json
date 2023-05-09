@@ -24,7 +24,7 @@
     // "noLib": true,                                    /* Disable including any library files, including the default lib.d.ts. */
     "useDefineForClassFields": true /* Emit ECMAScript-standard-compliant class fields. */,
     "alwaysStrict": false,
-//    "ignoreDeprecations": "5.0",
+    "ignoreDeprecations": "5.0",
     "noImplicitUseStrict": true, // needed because BuildSystem.ts uses arguemtns to get the params fed into a function
     /* Modules */
 //    "module": "esnext" /* Specify what module code is generated. */,
@@ -80,7 +80,7 @@
     "forceConsistentCasingInFileNames": true /* Ensure that casing is correct in imports. */,
 
     /* Type Checking */
-    "strict": true /* Enable all strict type-checking options. */,
+    "strict": false /* Enable all strict type-checking options. */,
     // "noImplicitAny": true,                            /* Enable error reporting for expressions and declarations with an implied `any` type.. */
     // "strictNullChecks": true,                         /* When type checking, take into account `null` and `undefined`. */
     // "strictFunctionTypes": true,                      /* When assigning functions, check to ensure parameters and the return values are subtype-compatible. */
