@@ -8,7 +8,7 @@ import { createWorld } from "@latticexyz/recs";
 import { config } from "./config";
 import { SystemTypes } from "contracts/types/SystemTypes";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
-import { definePositionComponent } from "../client/src/layers/network/components"; // this is a bit sus, we should refactor this out sometime
+import { definePositionComponent } from "./components/PositionComponent"; // this is a bit sus, we should refactor this out sometime
 
 // The world contains references to all entities, all components and disposers.
 const world = createWorld();

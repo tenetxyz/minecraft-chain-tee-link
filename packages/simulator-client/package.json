@@ -10,5 +10,8 @@
   "dependencies": {
     "@latticexyz/recs": "^1.43.0",
     "@latticexyz/std-client": "^1.43.0"
+  },
+  "devDependencies": {
+    "type-check": "^0.4.0"
   }
 }
