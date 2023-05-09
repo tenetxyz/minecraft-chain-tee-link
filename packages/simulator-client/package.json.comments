@@ -1,0 +1,1 @@
+we need to compile with   "type": "module" otherwise we get SyntaxError: Cannot use import statement outside a module

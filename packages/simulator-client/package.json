@@ -4,14 +4,16 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc --noImplicitUseStrict -p .",
-    "dev": "yarn build && node dist/index.js"
+    "build": "tsc -p .",
+    "dev": "yarn build && node dist/index.mjs"
   },
   "dependencies": {
     "@latticexyz/recs": "^1.43.0",
     "@latticexyz/std-client": "^1.43.0"
   },
   "devDependencies": {
+    "ts-node": "^10.9.1",
     "type-check": "^0.4.0"
-  }
+  },
+  "type": "module"
 }
