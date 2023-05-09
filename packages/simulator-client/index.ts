@@ -8,6 +8,7 @@ import { createWorld } from "@latticexyz/recs";
 import { config } from "./config";
 import { SystemTypes } from "contracts/types/SystemTypes";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
+import { definePositionComponent } from "../client/src/layers/network/components"; // this is a bit sus, we should refactor this out sometime
 
 // The world contains references to all entities, all components and disposers.
 const world = createWorld();
@@ -16,21 +17,18 @@ const world = createWorld();
 // If a contractId is provided, MUD syncs the state with the corresponding
 // component contract (in this case `CounterComponent.sol`)
 const components = {
-  Counter: defineNumberComponent(world, {
-    metadata: {
-      contractId: "component.Counter",
-    },
-  }),
+  Position: definePositionComponent(world),
 };
 
 // Components expose a stream that triggers when the component is updated.
-components.Counter.update$.subscribe(({ value }) => {
-  document.getElementById("counter")!.innerHTML = String(value?.[0]?.value);
+components.Position.update$.subscribe(({ value }) => {
+  console.log(value);
 });
 
 // This is where the magic happens
 setupMUDNetwork<typeof components, SystemTypes>(config, world, components, SystemAbis).then(
   ({ startSync, systems }) => {
+    console.log("started simulator client");
     // After setting up the network, we can tell MUD to start the synchronization process.
     startSync();
 

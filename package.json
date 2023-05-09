@@ -10,7 +10,8 @@
   "workspaces": {
     "packages": [
       "packages/client",
-      "packages/contracts"
+      "packages/contracts",
+      "packages/simulator-client"
     ]
   },
   "devDependencies": {
