@@ -8,6 +8,7 @@ export const BlockType = {
   Log: keccak256("block.Log") as EntityID,
   Stone: keccak256("block.Stone") as EntityID,
   Sand: keccak256("block.Sand") as EntityID,
+  Gravel: keccak256("block.Gravel") as EntityID,
   Glass: keccak256("block.Glass") as EntityID,
   Water: keccak256("block.Water") as EntityID,
   Cobblestone: keccak256("block.Cobblestone") as EntityID,

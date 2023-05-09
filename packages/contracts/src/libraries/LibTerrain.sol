@@ -4,7 +4,7 @@ pragma solidity >=0.8.0;
 import { Perlin } from "noise/Perlin.sol";
 import { ABDKMath64x64 as Math } from "abdk-libraries-solidity/ABDKMath64x64.sol";
 import { Biome, STRUCTURE_CHUNK, STRUCTURE_CHUNK_CENTER } from "../constants.sol";
-import { AirID, GrassID, DirtID, LogID, StoneID, SandID, WaterID, CobblestoneID, CoalID, CraftingID, IronID, GoldID, DiamondID, LeavesID, PlanksID, RedFlowerID, GrassPlantID, OrangeFlowerID, MagentaFlowerID, LightBlueFlowerID, LimeFlowerID, PinkFlowerID, GrayFlowerID, LightGrayFlowerID, CyanFlowerID, PurpleFlowerID, BlueFlowerID, GreenFlowerID, BlackFlowerID, KelpID, WoolID, SnowID, ClayID, BedrockID } from "../prototypes/Blocks.sol";
+import { AirID, GrassID, DirtID, LogID, StoneID, SandID, GravelID, WaterID, CobblestoneID, CoalID, CraftingID, IronID, GoldID, DiamondID, LeavesID, PlanksID, RedFlowerID, GrassPlantID, OrangeFlowerID, MagentaFlowerID, LightBlueFlowerID, LimeFlowerID, PinkFlowerID, GrayFlowerID, LightGrayFlowerID, CyanFlowerID, PurpleFlowerID, BlueFlowerID, GreenFlowerID, BlackFlowerID, KelpID, WoolID, SnowID, ClayID, BedrockID } from "../prototypes/Blocks.sol";
 import { VoxelCoord } from "../types.sol";
 import { div } from "../utils.sol";
 
@@ -68,7 +68,7 @@ library LibTerrain {
       if (y == height + 1) {
         return KelpID;
       }
-      return SandID;
+      return GravelID;
     }
 
     if (maxBiomeIndex == uint256(Biome.Mountains)) return StoneID;
@@ -113,6 +113,9 @@ library LibTerrain {
     int32 distanceFromHeight = height - y;
 
     blockID = Sand(y, height, biome, distanceFromHeight);
+    if (blockID != 0) return blockID;
+
+    blockID = Gravel(y, height, biome, distanceFromHeight);
     if (blockID != 0) return blockID;
 
     blockID = Snow(y, height, biomeValues[uint256(Biome.Mountains)]);
@@ -395,12 +398,35 @@ library LibTerrain {
   ) internal pure returns (uint256) {
     if (y >= height) return 0;
 
-    if (biome == uint8(Biome.Desert) && y >= -20) return SandID;
+    if (biome == uint8(Biome.Desert) && y < -20) return SandID;
 
     if (y >= 2) return 0;
 
     if (biome == uint8(Biome.Savanna) && distanceFromHeight <= 4) return SandID;
     if (biome == uint8(Biome.Forest) && distanceFromHeight <= 2) return SandID;
+  }
+
+  function Gravel(VoxelCoord memory coord) internal pure returns (uint256) {
+    int128[4] memory biomeValues = getBiome(coord.x, coord.z);
+    int32 height = getHeight(coord.x, coord.z, biomeValues);
+    uint8 biome = getMaxBiome(biomeValues);
+    return Gravel(coord.y, height, biome, height - coord.y);
+  }
+
+  function Gravel(
+    int32 y,
+    int32 height,
+    uint8 biome,
+    int32 distanceFromHeight
+  ) internal pure returns (uint256) {
+    if (y >= height) return 0;
+
+    if (biome == uint8(Biome.Desert) && y >= -20) return GravelID;
+
+    if (y >= 2) return 0;
+
+    if (biome == uint8(Biome.Savanna) && distanceFromHeight <= 4) return GravelID;
+    if (biome == uint8(Biome.Forest) && distanceFromHeight <= 2) return GravelID;
   }
 
   function Diamond(VoxelCoord memory coord) internal pure returns (uint256) {

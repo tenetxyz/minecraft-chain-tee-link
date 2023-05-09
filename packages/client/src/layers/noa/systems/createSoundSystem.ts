@@ -79,6 +79,7 @@ export function createSoundSystem(network: NetworkLayer, context: NoaLayer) {
       Dirt: registerSoundEffect("place/dirt"),
       Metal: registerSoundEffect("place/metal"),
       Sand: registerSoundEffect("place/sand"),
+      Gravel: registerSoundEffect("place/sand"),
       Stone: registerSoundEffect("place/stone"),
       Wood: registerSoundEffect("place/wood"),
     },

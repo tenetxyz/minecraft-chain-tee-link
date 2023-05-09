@@ -6,7 +6,7 @@ import { getAddressById, addressToEntity } from "solecs/utils.sol";
 import { PositionComponent, ID as PositionComponentID } from "../components/PositionComponent.sol";
 import { OwnedByComponent, ID as OwnedByComponentID } from "../components/OwnedByComponent.sol";
 import { LibTerrain } from "../libraries/LibTerrain.sol";
-import { AirID, GrassID, DirtID, LogID, StoneID, SandID, WaterID, CobblestoneID, CoalID, CraftingID, IronID, GoldID, DiamondID, LeavesID, PlanksID, RedFlowerID, GrassPlantID, OrangeFlowerID, MagentaFlowerID, LightBlueFlowerID, LimeFlowerID, PinkFlowerID, GrayFlowerID, LightGrayFlowerID, CyanFlowerID, PurpleFlowerID, BlueFlowerID, GreenFlowerID, BlackFlowerID, KelpID, WoolID, SnowID, ClayID, BedrockID } from "../prototypes/Blocks.sol";
+import { AirID, GrassID, DirtID, LogID, StoneID, SandID, GravelID, WaterID, CobblestoneID, CoalID, CraftingID, IronID, GoldID, DiamondID, LeavesID, PlanksID, RedFlowerID, GrassPlantID, OrangeFlowerID, MagentaFlowerID, LightBlueFlowerID, LimeFlowerID, PinkFlowerID, GrayFlowerID, LightGrayFlowerID, CyanFlowerID, PurpleFlowerID, BlueFlowerID, GreenFlowerID, BlackFlowerID, KelpID, WoolID, SnowID, ClayID, BedrockID } from "../prototypes/Blocks.sol";
 import { VoxelCoord } from "../utils.sol";
 
 uint256 constant ID = uint256(keccak256("system.Occurrence"));
@@ -25,6 +25,7 @@ contract OccurrenceSystem is System {
     if (blockType == LogID) return abi.encode(Log(coord));
     if (blockType == StoneID) return abi.encode(Stone(coord));
     if (blockType == SandID) return abi.encode(Sand(coord));
+    if (blockType == GravelID) return abi.encode(Gravel(coord));
     if (blockType == WaterID) return abi.encode(Water(coord));
     if (blockType == DiamondID) return abi.encode(Diamond(coord));
     if (blockType == CoalID) return abi.encode(Coal(coord));
@@ -75,6 +76,10 @@ contract OccurrenceSystem is System {
 
   function Sand(VoxelCoord memory coord) public pure returns (uint256) {
     return LibTerrain.Sand(coord);
+  }
+
+  function Gravel(VoxelCoord memory coord) public pure returns (uint256) {
+    return LibTerrain.Gravel(coord);
   }
 
   function Water(VoxelCoord memory coord) public pure returns (uint256) {
