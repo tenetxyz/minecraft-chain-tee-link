@@ -32,8 +32,8 @@ npm manifest:
       "dev": "yarn build && node dist/index.mjs"
     },
     "dependencies": {
-      "@latticexyz/recs": "^1.43.0",
-      "@latticexyz/std-client": "^1.43.0"
+      "@latticexyz/recs": "^1.31.2",
+      "@latticexyz/std-client": "^1.31.2"
     },
     "devDependencies": {
       "ts-node": "^10.9.1",
