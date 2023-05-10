@@ -1,17 +1,28 @@
-import {
-  // createActionSystem,
-  // defineNumberComponent,
-  setupMUDNetwork,
-  // waitForActionCompletion,
-} from "@latticexyz/std-client";
+import { setupMUDNetwork } from "@latticexyz/std-client";
 import { createWorld } from "@latticexyz/recs";
-import { config } from "./config.js";
-// import { SystemTypes } from "contracts/types/SystemTypes";
+import { SystemTypes } from "contracts/types/SystemTypes";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
-import { definePositionComponent } from "./components/PositionComponent.js"; // this is a bit sus, we should refactor this out sometime
+import { config } from "./config";
+import { definePositionComponent } from "./components/PositionComponent";
 
 // The world contains references to all entities, all components and disposers.
 const world = createWorld();
+
+// Components contain the application state.
+// If a contractId is provided, MUD syncs the state with the corresponding
+// component contract (in this case `CounterComponent.sol`)
+// const components = {
+//   Counter: defineNumberComponent(world, {
+//     metadata: {
+//       contractId: "component.Counter",
+//     },
+//   }),
+// };
+//
+// // Components expose a stream that triggers when the component is updated.
+// components.Counter.update$.subscribe(({ value }) => {
+//   document.getElementById("counter")!.innerHTML = String(value?.[0]?.value);
+// });
 
 // Components contain the application state.
 // If a contractId is provided, MUD syncs the state with the corresponding
@@ -26,13 +37,15 @@ components.Position.update$.subscribe(({ value }) => {
 });
 
 // This is where the magic happens
-setupMUDNetwork<typeof components, any>(config, world, components, SystemAbis).then(({ startSync, systems }) => {
-  console.log("started simulator client");
-  console.log(systems);
-  // After setting up the network, we can tell MUD to start the synchronization process.
-  startSync();
+setupMUDNetwork<typeof components, SystemTypes>(config, world, components, SystemAbis).then(
+  ({ startSync, systems }) => {
+    // After setting up the network, we can tell MUD to start the synchronization process.
+    startSync();
+    console.log("systems");
+    console.log(systems);
 
-  // Just for demonstration purposes: we create a global function that can be
-  // called to invoke the Increment system contract. (See IncrementSystem.sol.)
-  // (window as any).increment = () => systems["system.Increment"].executeTyped("0x00");
-});
+    // Just for demonstration purposes: we create a global function that can be
+    // called to invoke the Increment system contract. (See IncrementSystem.sol.)
+    // (window as any).increment = () => systems["system.Increment"].executeTyped("0x00");
+  }
+);

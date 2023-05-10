@@ -1,0 +1,24 @@
+{
+  "name": "old-simulator-client",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc -p .",
+    "dev": "export FAST_REFRESH=false&& webpack --watch --config webpack.config.js",
+    "ss": "node --loader ts-node/esm node_modules/webpack-cli/bin/cli.js --config webpack.config.js"
+  },
+  "dependencies": {
+    "@latticexyz/recs": "^1.31.2",
+    "@latticexyz/std-client": "^1.31.2"
+  },
+  "devDependencies": {
+    "esbuild-loader": "^3.0.1",
+    "ts-node": "^10.9.1",
+    "type-check": "^0.4.0",
+    "webpack": "^5.82.1",
+    "webpack-cli": "^5.1.1",
+    "webpack-dev-server": "^4.15.0"
+  },
+  "type": "module"
+}

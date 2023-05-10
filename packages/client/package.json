@@ -90,7 +90,7 @@
     "lodash": "^4.17.21",
     "netlify": "^11.0.2",
     "netlify-cli": "^10.10.2",
-    "parcel": "^2.6.2",
+    "parcel": "^2.8.3",
     "parcel-reporter-static-files-copy": "^1.4.0",
     "prettier": "^2.5.1",
     "process": "^0.11.10",
