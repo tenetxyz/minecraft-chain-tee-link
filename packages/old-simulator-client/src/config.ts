@@ -1,6 +1,7 @@
 import { SetupContractConfig } from "@latticexyz/std-client";
 import { Wallet } from "ethers";
-const params = new URLSearchParams(window.location.search);
+// const params = new URLSearchParams(window.location.search);
+const params = new Map();
 
 export const config: SetupContractConfig = {
   clock: {

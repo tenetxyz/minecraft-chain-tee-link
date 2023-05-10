@@ -1,11 +1,11 @@
-import { createServer } from "vite";
-import { ViteNodeServer } from "vite/dist/node/index";
+import { createServer, ViteDevServer } from "vite";
+import { ViteNodeServer } from "vite-node/server";
 import { ViteNodeRunner } from "vite-node/client";
 import { installSourcemapsSupport } from "vite-node/source-map";
 
 const main = async function () {
   // create vite server
-  const server = await createServer({
+  const server: ViteDevServer = await createServer({
     optimizeDeps: {
       // It's recommended to disable deps optimization
       disabled: true,

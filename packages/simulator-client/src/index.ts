@@ -7,6 +7,7 @@ import { definePositionComponent } from "./components/PositionComponent";
 
 // The world contains references to all entities, all components and disposers.
 const world = createWorld();
+console.log("running");
 
 // Components contain the application state.
 // If a contractId is provided, MUD syncs the state with the corresponding
