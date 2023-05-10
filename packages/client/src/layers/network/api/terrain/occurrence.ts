@@ -26,12 +26,29 @@ export function Sand(state: TerrainState): EntityID | undefined {
   if (y >= height) return;
 
   const biome = accessState(state, "biome");
-  if (biome === Biome.Desert && y >= -20) return BlockType.Sand;
+  if (biome === Biome.Desert && y < -20) return BlockType.Sand;
 
   if (y >= 2) return;
   const distanceFromHeight = accessState(state, "distanceFromHeight");
   if (biome === Biome.Savanna && distanceFromHeight <= 4) return BlockType.Sand;
   if (biome === Biome.Forest && distanceFromHeight <= 2) return BlockType.Sand;
+}
+
+export function Gravel(state: TerrainState): EntityID | undefined {
+  const {
+    coord: { y },
+    height,
+  } = state;
+
+  if (y >= height) return;
+
+  const biome = accessState(state, "biome");
+  if (biome === Biome.Desert && y >= -20) return BlockType.Gravel;
+
+  if (y >= 2) return;
+  const distanceFromHeight = accessState(state, "distanceFromHeight");
+  if (biome === Biome.Savanna && distanceFromHeight <= 4) return BlockType.Gravel;
+  if (biome === Biome.Forest && distanceFromHeight <= 2) return BlockType.Gravel;
 }
 
 export function Diamond(state: TerrainState): EntityID | undefined {

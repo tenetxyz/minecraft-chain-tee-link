@@ -13,6 +13,7 @@ import {
   Dirt,
   Grass,
   Sand,
+  Gravel,
   SmallPlant,
   Snow,
   Stone,
@@ -74,6 +75,7 @@ export function getTerrainBlock({ biome: biomeVector, height }: Terrain, coord: 
     Diamond(state) ||
     Coal(state) ||
     Sand(state) ||
+    Gravel(state) ||
     Snow(state) ||
     Grass(state) ||
     Stone(state) ||

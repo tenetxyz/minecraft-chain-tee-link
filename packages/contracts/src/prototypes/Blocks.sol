@@ -13,6 +13,7 @@ uint256 constant DirtID = uint256(keccak256("block.Dirt"));
 uint256 constant LogID = uint256(keccak256("block.Log"));
 uint256 constant StoneID = uint256(keccak256("block.Stone"));
 uint256 constant SandID = uint256(keccak256("block.Sand"));
+uint256 constant GravelID = uint256(keccak256("block.Gravel"));
 uint256 constant GlassID = uint256(keccak256("block.Glass"));
 uint256 constant WaterID = uint256(keccak256("block.Water"));
 uint256 constant CobblestoneID = uint256(keccak256("block.Cobblestone"));
@@ -78,8 +79,8 @@ function defineBlocks(
   itemPrototypeComponent.set(StoneID);
   occurrenceComponent.set(StoneID, FunctionSelector(address(occurrenceSystem), occurrenceSystem.Stone.selector));
 
-  itemPrototypeComponent.set(SandID);
-  occurrenceComponent.set(SandID, FunctionSelector(address(occurrenceSystem), occurrenceSystem.Sand.selector));
+  itemPrototypeComponent.set(GravelID);
+  occurrenceComponent.set(GravelID, FunctionSelector(address(occurrenceSystem), occurrenceSystem.Gravel.selector));
 
   itemPrototypeComponent.set(WaterID);
   occurrenceComponent.set(WaterID, FunctionSelector(address(occurrenceSystem), occurrenceSystem.Water.selector));

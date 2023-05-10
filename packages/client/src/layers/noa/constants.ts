@@ -17,6 +17,7 @@ export const Textures = {
   Log: "./assets/blocks/47-Log-1-sides.png",
   LogTop: "./assets/blocks/47-Log-0-top.png",
   Sand: "./assets/blocks/07-Sand.png",
+  Gravel: "./assets/blocks/07-Gravel.png",
   Glass: "./assets/blocks/11-Glass.png",
   Stone: "./assets/blocks/48-Stone.png",
   Water: "./assets/blocks/10-4-Water.png",
@@ -76,6 +77,7 @@ export const UVWraps: { [key in BlockTypeKey]: string | undefined } = {
   Dirt: "./assets/uv-wraps/dirt.png",
   Log: "./assets/uv-wraps/log.png",
   Sand: "./assets/uv-wraps/sand.png",
+  Gravel: "./assets/uv-wraps/gravel.png",
   Glass: "./assets/uv-wraps/glass.png",
   Stone: "./assets/uv-wraps/stone.png",
   Water: undefined,
@@ -132,6 +134,7 @@ export const Blocks: { [key in BlockTypeKey]: Block | undefined } = {
   Dirt: { type: NoaBlockType.BLOCK, material: Textures.Dirt },
   Log: { type: NoaBlockType.BLOCK, material: [Textures.LogTop, Textures.Log] },
   Sand: { type: NoaBlockType.BLOCK, material: Textures.Sand },
+  Gravel: { type: NoaBlockType.BLOCK, material: Textures.Gravel },
   Glass: { type: NoaBlockType.BLOCK, material: Textures.Glass, opaque: true },
   Stone: { type: NoaBlockType.BLOCK, material: Textures.Stone },
   Water: {
