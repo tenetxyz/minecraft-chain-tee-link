@@ -1,1 +1,0 @@
-{"version":3,"file":"PositionComponent.js","sourceRoot":"","sources":["PositionComponent.ts"],"names":[],"mappings":";;;AACA,uDAAmE;AAEnE,SAAgB,uBAAuB,CAAC,KAAY;IAClD,OAAO,IAAA,sCAAyB,EAAC,KAAK,EAAE;QACtC,EAAE,EAAE,UAAU;QACd,QAAQ,EAAE,EAAE,UAAU,EAAE,oBAAoB,EAAE;KAC/C,CAAC,CAAC;AACL,CAAC;AALD,0DAKC"}
