@@ -34,8 +34,12 @@ const components = {
 
 // Components expose a stream that triggers when the component is updated.
 components.Position.update$.subscribe(({ value }) => {
-  console.log(value);
+  console.log("position update");
+  for (const v of value) {
+    console.log(v);
+  }
 });
+// we don't need faucets to drip cause we are just an observer
 
 // This is where the magic happens
 setupMUDNetwork<typeof components, SystemTypes>(config, world, components, SystemAbis).then(
