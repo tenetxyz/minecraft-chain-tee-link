@@ -11,7 +11,7 @@ import java.io.*;
 import java.util.stream.Collectors;
 
 class ActivateCreationHandler implements HttpHandler {
-    Plugin pluginReference;
+    Plugin pluginReference; // This reference helps us modify the world on the main thread via a bukkit scheduler
 
     public ActivateCreationHandler(Plugin pluginReference) {
         this.pluginReference = pluginReference;
@@ -19,24 +19,23 @@ class ActivateCreationHandler implements HttpHandler {
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        System.out.println(exchange.getRequestMethod());
-        // Read the JSON payload from the request
         String requestBody = new BufferedReader(new InputStreamReader(exchange.getRequestBody()))
                 .lines().collect(Collectors.joining("\n"));
-
-        // Parse the JSON payload using Gson
         Gson gson = new Gson();
         ActivateCreationRequest activateCreationRequest = gson.fromJson(requestBody, ActivateCreationRequest.class);
 
-        String response = "Creation activated!";
-        try{
+        String response;
+        int statusCode;
+        try {
             setCreation(activateCreationRequest);
-            exchange.sendResponseHeaders(200, response.length());
-        }catch(Exception e){
-            response =  "Could not activate creation. " + e.getMessage();
-            exchange.sendResponseHeaders(400, response.length());
+            response = "Creation activated!";
+            statusCode = 200;
+        } catch (Exception e) {
+            response = "Could not activate creation. " + e.getMessage();
+            statusCode = 400;
         }
         System.out.println(response);
+        exchange.sendResponseHeaders(statusCode, response.length());
         OutputStream os = exchange.getResponseBody();
         os.write(response.getBytes());
         os.close();
