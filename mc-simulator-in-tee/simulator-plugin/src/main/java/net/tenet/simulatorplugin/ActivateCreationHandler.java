@@ -1,4 +1,5 @@
 package net.tenet.simulatorplugin;
+
 import com.google.gson.Gson;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -8,7 +9,10 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
@@ -35,24 +39,23 @@ class ActivateCreationHandler implements HttpHandler {
     }
 
     // return shte statusCode and the response
-    private Pair<Integer, String> tryActivateCreation(HttpExchange exchange){
+    private Pair<Integer, String> tryActivateCreation(HttpExchange exchange) {
         Creation creation;
-        try{
+        try {
             String requestBody = new BufferedReader(new InputStreamReader(exchange.getRequestBody()))
                     .lines().collect(Collectors.joining("\n"));
             Gson gson = new Gson();
             creation = gson.fromJson(requestBody, Creation.class);
-        }catch(Exception e){
+        } catch (Exception e) {
             return Pair.of(400, "Could not parse request body: " + e.getMessage());
         }
 
-        if(creation.blocks.length == 0){
+        if (creation.blocks.length == 0) {
             return Pair.of(400, "No blocks provided. Creations must have at least one block.");
         }
 
         try {
             setCreation(creation);
-
             Block upperNorthEastBlock = calculateCornerBlock(creation.blocks, (Block block, Block resultBlock) ->
                     block.x >= resultBlock.x &&
                             block.y >= resultBlock.y &&
@@ -79,7 +82,7 @@ class ActivateCreationHandler implements HttpHandler {
         return resultBlock;
     }
 
-    private void setCreation(Creation creation) throws IllegalArgumentException{
+    private void setCreation(Creation creation) throws IllegalArgumentException {
         // we can only modify the world on the main bukkit thread. so use a bukkit scheduler
         World world = Bukkit.getWorlds().get(0); // Assuming overwriting chunks in the main world
         Bukkit.getScheduler().runTask(pluginReference, () -> {

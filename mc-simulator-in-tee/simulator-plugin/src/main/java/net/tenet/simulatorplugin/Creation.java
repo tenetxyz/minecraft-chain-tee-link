@@ -5,4 +5,3 @@ public class Creation {
     String ownerPlayerId;
     Block[] blocks;
 }
-
