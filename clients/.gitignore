@@ -1,0 +1,6 @@
+node_modules
+.yalc
+.eslintcache
+.parcel-cache
+# this venv is to use python 3.10 to install the dependencies node-gyp needs 3.10
+venv
