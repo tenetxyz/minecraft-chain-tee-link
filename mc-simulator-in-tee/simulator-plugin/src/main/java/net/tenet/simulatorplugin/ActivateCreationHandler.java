@@ -80,7 +80,7 @@ class ActivateCreationHandler implements HttpHandler {
     private void setCreation(ActivateCreationRequest activateCreationRequest ) throws IllegalArgumentException{
         // we can only modify the world on the main bukkit thread. so use a bukkit scheduler
         World world = Bukkit.getWorlds().get(0); // Assuming overwriting chunks in the main world
-        Bukkit.getScheduler().scheduleSyncRepeatingTask(pluginReference, () -> {
+        Bukkit.getScheduler().scheduleSyncDelayedTask(pluginReference, () -> {
             for (Block block : activateCreationRequest.blocks) {
                 Material material = Material.matchMaterial(block.blockMaterial);
                 if (material == null) {
@@ -88,6 +88,6 @@ class ActivateCreationHandler implements HttpHandler {
                 }
                 world.getBlockAt(block.x, block.y, block.z).setType(material, true);
             }
-        }, 20, 20);
+        }, 0);
     }
 }
