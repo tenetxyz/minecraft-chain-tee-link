@@ -67,16 +67,23 @@ class ActivateCreationHandler implements HttpHandler {
             return Pair.of(400, "No storage blocks found. Creations must have at least one storage block.");
         }
 
+        creation.upperNorthEastBlock = calculateCornerBlock(creation.blocks, (Block block, Block resultBlock) ->
+                block.x >= resultBlock.x &&
+                        block.y >= resultBlock.y &&
+                        block.z >= resultBlock.z);
+        creation.lowerSouthwestBlock = calculateCornerBlock(creation.blocks, (Block block, Block resultBlock) ->
+                block.x <= resultBlock.x &&
+                        block.y <= resultBlock.y &&
+                        block.z <= resultBlock.z);
+
+        if (creations.containsKey(creation.creationId)) {
+            // clear the old creation, so we don't leave creation carcasses around
+            // a benefit of doing this is that if the creation was reset in the exact same spot, the items in the chests would be cleared
+            clearExistingCreation(creations.get(creation.creationId));
+        }
+
         try {
             setCreation(creation);
-            creation.upperNorthEastBlock = calculateCornerBlock(creation.blocks, (Block block, Block resultBlock) ->
-                    block.x >= resultBlock.x &&
-                            block.y >= resultBlock.y &&
-                            block.z >= resultBlock.z);
-            creation.lowerSouthwestBlock = calculateCornerBlock(creation.blocks, (Block block, Block resultBlock) ->
-                    block.x <= resultBlock.x &&
-                            block.y <= resultBlock.y &&
-                            block.z <= resultBlock.z);
             creations.put(creation.creationId, creation);
 
             return Pair.of(200, String.format("Creation with id=%s activated!", creation.creationId));
@@ -114,5 +121,23 @@ class ActivateCreationHandler implements HttpHandler {
 
     private boolean creationHasStorageBlocks(Creation creation) {
         return Arrays.stream(creation.blocks).anyMatch(block -> block.blockMaterial.equalsIgnoreCase("chest"));
+    }
+
+    // Why can't we just iterate across all the blocks in the creation and set them to air?
+    // cause this creation may have pistons that have pushed blocks within this region.
+    // TODO: we need to find some way to prevent creations from pushing blocks outside their region
+    // Obsidian fencing around it won't work cause their creations may need exposure to light (daylight sensor)
+    private void clearExistingCreation(Creation creation) {
+        // we can only modify the world on the main bukkit thread. so use a bukkit scheduler
+        World world = Bukkit.getWorlds().get(0); // Assuming overwriting chunks in the main world
+        Bukkit.getScheduler().runTask(pluginReference, () -> {
+            for (int x = creation.lowerSouthwestBlock.x; x <= creation.upperNorthEastBlock.x; x++) {
+                for (int y = creation.lowerSouthwestBlock.y; y <= creation.upperNorthEastBlock.y; y++) {
+                    for (int z = creation.lowerSouthwestBlock.z; z <= creation.upperNorthEastBlock.z; z++) {
+                        world.setType(x, y, z, Material.AIR);
+                    }
+                }
+            }
+        });
     }
 }
