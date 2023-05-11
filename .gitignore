@@ -1,9 +1,2 @@
-node_modules
-.yalc
-.eslintcache
-.DS_STORE
-*.DS_Store
-.parcel-cache
 *.idea
-# this venv is to use python 3.10 to install the dependencies node-gyp needs 3.10
-venv
+*.DS_Store
