@@ -1,4 +1,4 @@
-package net.tenet.SimulatorPlugin;
+package net.tenet.simulatorplugin;
 
 import org.bukkit.Chunk;
 import org.bukkit.Material;

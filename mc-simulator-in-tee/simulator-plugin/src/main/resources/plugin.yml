@@ -1,6 +1,6 @@
 name: simulator-plugin
 version: '${project.version}'
-main: net.tenet.SimulatorPlugin.SimulatorPlugin
+main: net.tenet.simulatorplugin.SimulatorPlugin
 api-version: 1.19
 authors: [Tenet]
 description: Tenet's Minecraft Simulator Plugin

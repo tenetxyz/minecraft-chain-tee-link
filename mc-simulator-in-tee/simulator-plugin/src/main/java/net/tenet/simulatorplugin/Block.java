@@ -1,4 +1,4 @@
-package net.tenet.SimulatorPlugin;
+package net.tenet.simulatorplugin;
 
 public class Block {
     String blockMaterial;
