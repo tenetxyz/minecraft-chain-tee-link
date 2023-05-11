@@ -118,8 +118,6 @@ public class GetCreationOutputHandler implements HttpHandler {
                         JsonObject jsonItem = new JsonObject();
                         jsonItem.addProperty("type", itemStack.getType().name());
                         jsonItem.addProperty("amount", itemStack.getAmount());
-                        // Add more item properties to the JSON object if needed
-
                         jsonArray.add(jsonItem);
                     }
                 }

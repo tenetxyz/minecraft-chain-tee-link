@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
@@ -112,10 +113,6 @@ class ActivateCreationHandler implements HttpHandler {
     }
 
     private boolean creationHasStorageBlocks(Creation creation) {
-        for (Block block : creation.blocks) {
-            if (block.blockMaterial.equalsIgnoreCase("chest"))
-                return true;
-        }
-        return false;
+        return Arrays.stream(creation.blocks).anyMatch(block -> block.blockMaterial.equalsIgnoreCase("chest"));
     }
 }
