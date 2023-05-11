@@ -37,7 +37,7 @@ public final class SimulatorPlugin extends JavaPlugin {
     public void createServer() throws IOException {
         apiServer = HttpServer.create(new InetSocketAddress(API_SERVER_PORT), 0);
         apiServer.createContext("/activate-creation", new ActivateCreationHandler(this, creations));
-        apiServer.createContext("/get-creation-output", new GetCreationOutputHandler(creations));
+        apiServer.createContext("/get-creation-output", new GetCreationOutputHandler(this, creations));
         apiServer.start();
     }
 }

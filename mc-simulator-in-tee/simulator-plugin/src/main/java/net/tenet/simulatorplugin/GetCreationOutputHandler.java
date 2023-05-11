@@ -12,6 +12,7 @@ import org.bukkit.World;
 import org.bukkit.block.Chest;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -19,14 +20,18 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public class GetCreationOutputHandler implements HttpHandler {
+    Plugin pluginReference; // This reference helps us modify the world on the main thread via a bukkit scheduler
     Map<String, Creation> creations; // maps creationId -> Creation. We update this after a creation is activated
 
-    public GetCreationOutputHandler(Map<String, Creation> creations) {
+    public GetCreationOutputHandler(Plugin pluginReference, Map<String, Creation> creations) {
+        this.pluginReference = pluginReference;
         this.creations = creations;
     }
+
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -55,10 +60,18 @@ public class GetCreationOutputHandler implements HttpHandler {
         }
 
         try {
-            List<org.bukkit.block.Block> storageBlocks = getStorageBlocksInRegion(creation);
-            String creationOutput = getStorageItemsAsJson(storageBlocks);
+            // Since we are in the api server's handler, we are NOT in the main java thread
+            // So when calling the bukkit methods, we need to use the bukkit scheduler, and use a future to get the result back
+            CompletableFuture<String> future = new CompletableFuture<>();
+            Bukkit.getScheduler().runTask(pluginReference, () -> {
+                List<org.bukkit.block.Block> storageBlocks = getStorageBlocksInRegion(creation);
+                String storageItemsAsJson = getStorageItemsAsJson(storageBlocks);
+                future.complete(storageItemsAsJson);
+            });
+            String creationOutput = future.get(); // wait for the bukkit thread to finish
             return Pair.of(200, creationOutput);
         } catch (Exception e) {
+            e.printStackTrace();
             return Pair.of(400, "Could not get creation output: " + e.getMessage());
         }
     }
@@ -95,7 +108,7 @@ public class GetCreationOutputHandler implements HttpHandler {
         JsonArray jsonArray = new JsonArray();
 
         for (org.bukkit.block.Block block : storageBlocks) {
-            if (block.getState() instanceof Chest) {
+            if (block.getState() instanceof Chest) { // getState requires synchronous access to the main thread. So this function needs to be in a schedular
                 Chest chest = (Chest) block.getState();
                 Inventory inventory = chest.getBlockInventory();
 
