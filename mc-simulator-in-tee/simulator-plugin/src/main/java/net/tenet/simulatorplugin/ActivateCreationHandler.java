@@ -9,12 +9,14 @@ import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
 import java.io.*;
+import java.util.Map;
 import java.util.function.BiPredicate;
 import java.util.stream.Collectors;
 
 
 class ActivateCreationHandler implements HttpHandler {
     Plugin pluginReference; // This reference helps us modify the world on the main thread via a bukkit scheduler
+    Map<String, Creation> creations; // We need this map to determine how much each farm outputted
 
     public ActivateCreationHandler(Plugin pluginReference) {
         this.pluginReference = pluginReference;
@@ -34,28 +36,28 @@ class ActivateCreationHandler implements HttpHandler {
 
     // return shte statusCode and the response
     private Pair<Integer, String> tryActivateCreation(HttpExchange exchange){
-        ActivateCreationRequest activateCreationRequest;
+        Creation creation;
         try{
             String requestBody = new BufferedReader(new InputStreamReader(exchange.getRequestBody()))
                     .lines().collect(Collectors.joining("\n"));
             Gson gson = new Gson();
-            activateCreationRequest = gson.fromJson(requestBody, ActivateCreationRequest.class);
+            creation = gson.fromJson(requestBody, Creation.class);
         }catch(Exception e){
             return Pair.of(400, "Could not parse request body: " + e.getMessage());
         }
 
-        if(activateCreationRequest.blocks.length == 0){
+        if(creation.blocks.length == 0){
             return Pair.of(400, "No blocks provided. Creations must have at least one block.");
         }
 
         try {
-            setCreation(activateCreationRequest);
+            setCreation(creation);
 
-            Block upperNorthEastBlock = calculateCornerBlock(activateCreationRequest.blocks, (Block block, Block resultBlock) ->
+            Block upperNorthEastBlock = calculateCornerBlock(creation.blocks, (Block block, Block resultBlock) ->
                     block.x >= resultBlock.x &&
                             block.y >= resultBlock.y &&
                             block.z >= resultBlock.z);
-            Block lowerSouthwestBlock = calculateCornerBlock(activateCreationRequest.blocks, (Block block, Block resultBlock) ->
+            Block lowerSouthwestBlock = calculateCornerBlock(creation.blocks, (Block block, Block resultBlock) ->
                     block.x <= resultBlock.x &&
                             block.y <= resultBlock.y &&
                             block.z <= resultBlock.z);
@@ -77,17 +79,17 @@ class ActivateCreationHandler implements HttpHandler {
         return resultBlock;
     }
 
-    private void setCreation(ActivateCreationRequest activateCreationRequest ) throws IllegalArgumentException{
+    private void setCreation(Creation creation) throws IllegalArgumentException{
         // we can only modify the world on the main bukkit thread. so use a bukkit scheduler
         World world = Bukkit.getWorlds().get(0); // Assuming overwriting chunks in the main world
-        Bukkit.getScheduler().scheduleSyncDelayedTask(pluginReference, () -> {
-            for (Block block : activateCreationRequest.blocks) {
+        Bukkit.getScheduler().runTask(pluginReference, () -> {
+            for (Block block : creation.blocks) {
                 Material material = Material.matchMaterial(block.blockMaterial);
                 if (material == null) {
                     throw new IllegalArgumentException("Invalid material " + block.blockMaterial);
                 }
                 world.getBlockAt(block.x, block.y, block.z).setType(material, true);
             }
-        }, 0);
+        });
     }
 }
