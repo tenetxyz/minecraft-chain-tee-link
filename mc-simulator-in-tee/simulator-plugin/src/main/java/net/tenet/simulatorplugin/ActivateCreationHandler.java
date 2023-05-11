@@ -54,16 +54,21 @@ class ActivateCreationHandler implements HttpHandler {
             return Pair.of(400, "No blocks provided. Creations must have at least one block.");
         }
 
+        if (!creationHasStorageBlocks(creation)) {
+            return Pair.of(400, "No storage blocks found. Creations must have at least one storage block.");
+        }
+
         try {
             setCreation(creation);
-            Block upperNorthEastBlock = calculateCornerBlock(creation.blocks, (Block block, Block resultBlock) ->
+            creation.upperNorthEastBlock = calculateCornerBlock(creation.blocks, (Block block, Block resultBlock) ->
                     block.x >= resultBlock.x &&
                             block.y >= resultBlock.y &&
                             block.z >= resultBlock.z);
-            Block lowerSouthwestBlock = calculateCornerBlock(creation.blocks, (Block block, Block resultBlock) ->
+            creation.lowerSouthwestBlock = calculateCornerBlock(creation.blocks, (Block block, Block resultBlock) ->
                     block.x <= resultBlock.x &&
                             block.y <= resultBlock.y &&
                             block.z <= resultBlock.z);
+
             return Pair.of(200, "Creation activated!");
         } catch (Exception e) {
             return Pair.of(400, "Could not activate creation: " + e.getMessage());
@@ -94,5 +99,13 @@ class ActivateCreationHandler implements HttpHandler {
                 world.getBlockAt(block.x, block.y, block.z).setType(material, true);
             }
         });
+    }
+
+    private boolean creationHasStorageBlocks(Creation creation) {
+        for (Block block : creation.blocks) {
+            if (block.blockMaterial.equalsIgnoreCase("chest"))
+                return true;
+        }
+        return false;
     }
 }
