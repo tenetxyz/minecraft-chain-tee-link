@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 
 import java.io.*;
 
-class SetChunksHandler implements HttpHandler {
+class ActivateCreationHandler implements HttpHandler {
     // TODO: implement this
     @Override
     public void handle(HttpExchange exchange) throws IOException {
@@ -16,6 +16,17 @@ class SetChunksHandler implements HttpHandler {
         // Bukkit.getScheduler().runTaskAsynchronously(this, () -> overwriteChunks(chunkDataFile));
         int contentLength = Integer.parseInt(exchange.getRequestHeaders().getFirst("content-length"));
         byte[] buffer = new byte[contentLength];
+
+        try {
+            String data = new String(Files.readAllBytes(f.toPath()));
+            Gson gson = new Gson();
+            this.serverMetadata = gson.fromJson(data, ServerMetadata.class);
+            System.out.println("Loaded server metadata from file.");
+        } catch (IOException e) {
+            System.out.println("Failed to load server metadata from file!");
+            e.printStackTrace();
+        }
+
         exchange.getRequestBody().read(buffer, 0, contentLength);
         ByteArrayInputStream bais = new ByteArrayInputStream(buffer);
         ObjectInputStream ois = new ObjectInputStream(bais);

@@ -1,23 +1,13 @@
 package net.tenet.SimulatorPlugin;
-import com.sun.net.httpserver.HttpExchange;
-import com.sun.net.httpserver.HttpHandler;
 import com.sun.net.httpserver.HttpServer;
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.InetSocketAddress;
 
-import org.bukkit.Material;
-import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class SimulatorPlugin extends JavaPlugin {
-    private final int port = 8080;
+    private static final int API_SERVER_PORT = 4500;
 
     @Override
     public void onEnable() {
@@ -40,8 +30,8 @@ public final class SimulatorPlugin extends JavaPlugin {
     // When the server receives the request, it will spawn the creation inside
     // the world and execute it
     public void createServer() throws IOException{
-        HttpServer apiServer = HttpServer.create(new InetSocketAddress(port), 0);
-        apiServer.createContext("/set-chunks", new SetChunksHandler());
+        HttpServer apiServer = HttpServer.create(new InetSocketAddress(API_SERVER_PORT), 0);
+        apiServer.createContext("/activate-creation", new ActivateCreationHandler());
         apiServer.start();
     }
 }
