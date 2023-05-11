@@ -1,7 +1,6 @@
 package net.tenet.simulatorplugin;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
@@ -18,6 +17,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -92,27 +92,34 @@ public class GetCreationOutputHandler implements HttpHandler {
         return storageBlocks;
     }
 
+    // Note: If the farm drops loot with NBT data (enchanted golden swords at 50% durability), the output would still be GOLDEN_SWORD
+    // I think this is fine if we forget about the nbt data. These are just item farms
+    // - NBT = named binary tag. It's just item metadata
     private String getStorageItemsAsJson(List<org.bukkit.block.Block> storageBlocks) {
         Gson gson = new Gson();
-        JsonArray jsonArray = new JsonArray();
+        Map<String, Integer> items = new HashMap<>();
 
         for (org.bukkit.block.Block block : storageBlocks) {
             if (block.getState() instanceof Chest) { // getState requires synchronous access to the main thread. So this function needs to be in a schedular
                 Chest chest = (Chest) block.getState();
                 Inventory inventory = chest.getBlockInventory();
 
-                for (int i = 0; i < inventory.getSize(); i++) {
-                    ItemStack itemStack = inventory.getItem(i);
+                for (ItemStack itemStack : inventory.getContents()) {
                     if (itemStack != null) {
-                        JsonObject jsonItem = new JsonObject();
-                        jsonItem.addProperty("type", itemStack.getType().name());
-                        jsonItem.addProperty("amount", itemStack.getAmount());
-                        jsonArray.add(jsonItem);
+                        String itemName = itemStack.getType().name();
+                        int amount = itemStack.getAmount();
+                        items.put(itemName, items.getOrDefault(itemName, 0) + amount);
                     }
                 }
             }
         }
 
-        return gson.toJson(jsonArray);
+        // convert the items map to json
+        JsonObject jsonObject = new JsonObject();
+        for (Map.Entry<String, Integer> item : items.entrySet()) {
+            jsonObject.addProperty(item.getKey(), item.getValue());
+        }
+
+        return jsonObject.toString();
     }
 }
