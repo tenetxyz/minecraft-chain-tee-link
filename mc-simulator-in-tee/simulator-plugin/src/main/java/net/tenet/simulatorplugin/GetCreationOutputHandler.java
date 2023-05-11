@@ -56,7 +56,7 @@ public class GetCreationOutputHandler implements HttpHandler {
         }
         Creation creation = creations.get(getCreationOutputRequest.creationId);
         if (creation == null) {
-            return Pair.of(400, "Could not find creation with id: " + getCreationOutputRequest.creationId);
+            return Pair.of(400, "Could not find creation with id=" + getCreationOutputRequest.creationId);
         }
 
         try {
@@ -83,21 +83,10 @@ public class GetCreationOutputHandler implements HttpHandler {
         ArrayList<org.bukkit.block.Block> storageBlocks = new ArrayList<>();
 
         World world = Bukkit.getWorlds().get(0); // Assuming overwriting chunks in the main world
-        int minX = creation.lowerSouthwestBlock.x;
-        int minY = creation.lowerSouthwestBlock.y;
-        int minZ = creation.lowerSouthwestBlock.z;
-        int maxX = creation.upperNorthEastBlock.x;
-        int maxY = creation.upperNorthEastBlock.y;
-        int maxZ = creation.upperNorthEastBlock.z;
-
-        for (int x = minX; x <= maxX; x++) {
-            for (int y = minY; y <= maxY; y++) {
-                for (int z = minZ; z <= maxZ; z++) {
-                    org.bukkit.block.Block block = world.getBlockAt(x, y, z);
-                    if (block.getType() == Material.CHEST) {
-                        storageBlocks.add(block);
-                    }
-                }
+        for (Block creationBlock : creation.blocks) {
+            org.bukkit.block.Block bukkitBlock = world.getBlockAt(creationBlock.x, creationBlock.y, creationBlock.z);
+            if (bukkitBlock.getType() == Material.CHEST) {
+                storageBlocks.add(bukkitBlock);
             }
         }
         return storageBlocks;
