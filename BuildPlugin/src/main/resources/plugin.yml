@@ -3,3 +3,6 @@ version: '${project.version}'
 main: net.tenet.buildplugin.BuildPlugin
 api-version: 1.19
 authors: [Tenet]
+commands:
+  suggest:
+    description: Suggest
