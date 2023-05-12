@@ -3,6 +3,7 @@ version: '${project.version}'
 main: net.tenet.buildplugin.BuildPlugin
 api-version: 1.19
 authors: [Tenet]
+depend: [WorldEdit]
 commands:
-  suggest:
-    description: Suggest
+  export_selection:
+    description: Export selection
