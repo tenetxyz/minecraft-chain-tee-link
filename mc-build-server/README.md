@@ -1,9 +1,9 @@
 ## Creating a MC Build Server
 
 1. Add the following plugins:
-- WorldEdit - Tenet fork
-- BuildPlugin by Tenet
-- PlotSquared
+- WorldEdit - Tenet fork (https://github.com/tenetxyz/WorldEdit/tree/tenet-main)
+- BuildPlugin by Tenet (https://github.com/tenetxyz/mc-on-chain/tree/main/mc-build-server/BuildPlugin)
+- PlotSquared (https://github.com/IntellectualSites/PlotSquared)
 
 2. Edit server.properties
     - `level-name=plotworld`
@@ -14,5 +14,5 @@
     - ```
         worlds:
           plotworld:
-            generator: PLotSquared
+            generator: PlotSquared
         ```
