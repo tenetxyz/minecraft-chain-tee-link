@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 import "std-contracts/components/Uint256ArrayBareComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.ActivatedCreation"));
+uint256 constant ID = uint256(keccak256("component.ActivatedCreations"));
 
 // maps ownerId -> list of activated creationIds
 // activated creations are just entities with a position and a creationId
