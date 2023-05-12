@@ -27,7 +27,7 @@ import { StakeComponent, ID as StakeComponentID } from "components/StakeComponen
 import { ClaimComponent, ID as ClaimComponentID } from "components/ClaimComponent.sol";
 import { NameComponent, ID as NameComponentID } from "components/NameComponent.sol";
 import { CreationComponent, ID as CreationComponentID } from "components/CreationComponent.sol";
-import { ActivatedCreationComponent, ID as ActivatedCreationComponentID } from "components/ActivatedCreationComponent.sol";
+import { ActivatedCreationsComponent, ID as ActivatedCreationsComponentID } from "components/ActivatedCreationsComponent.sol";
 
 // Systems (requires 'systems=...' remapping in project's remappings.txt)
 import { ComponentDevSystem, ID as ComponentDevSystemID } from "systems/ComponentDevSystem.sol";
@@ -117,8 +117,8 @@ library LibDeploy {
       comp = new CreationComponent(address(result.world));
       console.log(address(comp));
 
-      console.log("Deploying ActivatedCreationComponent");
-      comp = new ActivatedCreationComponent(address(result.world));
+      console.log("Deploying ActivatedCreationsComponent");
+      comp = new ActivatedCreationsComponent(address(result.world));
       console.log(address(comp));
     } 
     
@@ -161,7 +161,7 @@ library LibDeploy {
     authorizeWriter(components, ClaimComponentID, address(system));
     authorizeWriter(components, NameComponentID, address(system));
     authorizeWriter(components, CreationComponentID, address(system));
-    authorizeWriter(components, ActivatedCreationComponentID, address(system));
+    authorizeWriter(components, ActivatedCreationsComponentID, address(system));
     console.log(address(system));
 
     console.log("Deploying BulkSetStateSystem");
@@ -178,7 +178,7 @@ library LibDeploy {
     authorizeWriter(components, ClaimComponentID, address(system));
     authorizeWriter(components, NameComponentID, address(system));
     authorizeWriter(components, CreationComponentID, address(system));
-    authorizeWriter(components, ActivatedCreationComponentID, address(system));
+    authorizeWriter(components, ActivatedCreationsComponentID, address(system));
     console.log(address(system));
 
     console.log("Deploying MineSystem");
@@ -278,7 +278,7 @@ library LibDeploy {
     console.log("Deploying ActivateCreationSystem");
     system = new ActivateCreationSystem(world, address(components));
     world.registerSystem(address(system), ActivateCreationSystemID);
-    authorizeWriter(components, ActivatedCreationComponentID, address(system));
+    authorizeWriter(components, ActivatedCreationsComponentID, address(system));
     console.log(address(system));
   }
 }

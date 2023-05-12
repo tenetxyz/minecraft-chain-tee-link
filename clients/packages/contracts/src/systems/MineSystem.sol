@@ -42,6 +42,7 @@ contract MineSystem is System {
 
     uint256 entity;
 
+    // TODO: you cannot mine a block if it was part of a creation.
     if (entitiesAtPosition.length == 0) {
       // If there is no entity at this position, try mining the terrain block at this position
       (bool success, bytes memory occurrence) = staticcallFunctionSelector(

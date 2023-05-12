@@ -11,7 +11,7 @@
     "ClaimComponent",
     "NameComponent",
     "CreationComponent",
-    "ActivatedCreationComponent"
+    "ActivatedCreationsComponent"
   ],
   "systems": [
     { "name": "ComponentDevSystem", "writeAccess": ["*"] },
@@ -38,6 +38,6 @@
       "initialize": "new bytes(0)"
     },
     { "name": "RegisterCreationSystem", "writeAccess": ["CreationComponent"] },
-    { "name": "ActivateCreationSystem", "writeAccess": ["ActivatedCreationComponent"] }
+    { "name": "ActivateCreationSystem", "writeAccess": ["ActivatedCreationsComponent"] }
   ]
 }
