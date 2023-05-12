@@ -15,7 +15,7 @@ contract RegisterCreationSystem is System {
     constructor(IWorld _world, address _components) System(_world, _components) {}
 
     function execute(bytes memory arguments) public returns (bytes memory) {
-        (uint256 creationOwner, uint256[] memory blocks) = abi.decode(arguments, (uint256, VoxelCoord));
+        (address creationOwner, uint256[] memory opcBlocks) = abi.decode(arguments, (address, uint256[]));
 
         // we are not using msg.sender to register the creationOwner since it's coming from the mc server
         // This MC server is trusted to register creations on behalf of the player
@@ -24,16 +24,16 @@ contract RegisterCreationSystem is System {
         CreationOwnerComponent creationOwnerComponent = CreationOwnerComponent(getAddressById(components, CreationOwnerComponentID));
         CreationBlocksComponent creationBlocksComponent = CreationBlocksComponent(getAddressById(components, CreationBlocksComponentID));
 
-        require(blocks.length <= 200, "Your creation cannot exceed 100 blocks");
+        require(opcBlocks.length <= 200, "Your creation cannot exceed 100 blocks");
 
-        uint256 memory creationId = uint256(keccak256(blocks)); // Note: we only hash the blocks, and not the owner, so we can see if this arrangement has been made before
-        require(!creationOwnerComponent.has(creationId), "This creation has already been created by " + creationOwnerComponent.get(creationId) + ". This creation's id is " + creationId);
+        uint256 creationId = uint256(keccak256(abi.encodePacked(opcBlocks))); // Note: we only hash the blocks, and not the owner, so we can see if this arrangement has been made before
+        require(!creationOwnerComponent.has(creationId), string(abi.encodePacked("This creation has already been created by ", creationOwnerComponent.getValue(creationId) , ". This creation's id is " , creationId)));
 
-        creationOwnerComponent.setValue(creationId, creationOwner);
-        creationBlocksComponent.setValue(creationId, blocks);
+        creationOwnerComponent.set(creationId, creationOwner);
+        creationBlocksComponent.set(creationId, opcBlocks);
     }
 
-    function executeTyped(uint256 creationOwner, uint256[] memory blocks) public returns (bytes memory) {
-        return execute(abi.encode(creationOwner, blocks));
+    function executeTyped(address creationOwner, uint256[] memory opcBlocks) public returns (bytes memory) {
+        return execute(abi.encode(creationOwner, opcBlocks));
     }
 }

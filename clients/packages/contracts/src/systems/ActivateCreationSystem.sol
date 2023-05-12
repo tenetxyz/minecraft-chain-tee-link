@@ -7,7 +7,7 @@ import { PositionComponent, ID as PositionComponentID } from "../components/Posi
 import { ItemComponent, ID as ItemComponentID } from "../components/ItemComponent.sol";
 import { OwnedByComponent, ID as OwnedByComponentID } from "../components/OwnedByComponent.sol";
 import { CreationOwnerComponent, ID as CreationOwnerComponentID } from "../components/CreationOwnerComponent.sol";
-import { CreationBlocksComponent, ID as CreationBlocksComponentID, Block, unmarshalBlocks } from "../components/CreationBlocksComponent.sol";
+import { CreationBlocksComponent, ID as CreationBlocksComponentID, OpcBlock} from "../components/CreationBlocksComponent.sol";
 import { getClaimAtCoord } from "../systems/ClaimSystem.sol";
 import { VoxelCoord } from "../types.sol";
 import { AirID } from "../prototypes/Blocks.sol";
@@ -28,24 +28,24 @@ contract ActivateCreationSystem is System {
 
         // require creation to be owned by caller
         // TODO: Allow people other than the owner to activate creations
-        require(creationOwnerComponent.getValue(creationId) == addressToEntity(msg.sender), "creation is now owned by player");
+        require(creationOwnerComponent.getValue(creationId) == msg.sender, "creation is now owned by player");
 
         // before spawning the creation at the lowerSouthwestCoord, we need to verify that the area in OPCraft is all air
-        Block[] memory blocks = unmarshalBlocks(creationBlocksComponent.getValue(creationId));
-        for(uint32 i= 0; i < blocks.length;i++){
-            Block memory block = blocks[i];
+        OpcBlock[] memory opcBlocks = creationBlocksComponent.unmarshalBlocks(creationBlocksComponent.getValue(creationId));
+        for(uint32 i= 0; i < opcBlocks.length;i++){
+            OpcBlock memory opcBlock = opcBlocks[i];
             VoxelCoord memory coord = VoxelCoord({
-                x: lowerSouthwestCoord.x + block.x,
-                y: lowerSouthwestCoord.y + block.y,
-                z: lowerSouthwestCoord.z + block.z
+                x: lowerSouthwestCoord.x + opcBlock.x,
+                y: lowerSouthwestCoord.y + opcBlock.y,
+                z: lowerSouthwestCoord.z + opcBlock.z
             });
 
             // now that we have the coord of the block in OPCraft, verify that it's air
             uint256[] memory entitiesAtPosition = positionComponent.getEntitiesWithValue(coord);
-            require(entitiesAtPosition.length == 0 || entitiesAtPosition.length == 1, "An entity at coord is non-empty: " + coord.x + "," + coord.y + "," + coord.z);
+            require(entitiesAtPosition.length == 0 || entitiesAtPosition.length == 1, string(abi.encodePacked("An entity at coord is non-empty: ", coord.x, ",", coord.y, ",", coord.z)));
             if (entitiesAtPosition.length == 1) {
                 ItemComponent itemComponent = ItemComponent(getAddressById(components, ItemComponentID));
-                require(itemComponent.getValue(entitiesAtPosition[0]) == AirID, "All blocks in the volume the creation occupies must be air. This block is not air: " + coord.x + "," + coord.y + "," + coord.z);
+                require(itemComponent.getValue(entitiesAtPosition[0]) == AirID, string(abi.encodePacked("All blocks in the volume the creation occupies must be air. This block is not air: ", coord.x, ",", coord.y, ",", coord.z)));
             }
         }
 

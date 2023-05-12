@@ -26,6 +26,9 @@ import { OccurrenceComponent, ID as OccurrenceComponentID } from "components/Occ
 import { StakeComponent, ID as StakeComponentID } from "components/StakeComponent.sol";
 import { ClaimComponent, ID as ClaimComponentID } from "components/ClaimComponent.sol";
 import { NameComponent, ID as NameComponentID } from "components/NameComponent.sol";
+import { CreationBlocksComponent, ID as CreationBlocksComponentID } from "components/CreationBlocksComponent.sol";
+import { CreationOwnerComponent, ID as CreationOwnerComponentID } from "components/CreationOwnerComponent.sol";
+import { ActivatedCreationComponent, ID as ActivatedCreationComponentID } from "components/ActivatedCreationComponent.sol";
 
 // Systems (requires 'systems=...' remapping in project's remappings.txt)
 import { ComponentDevSystem, ID as ComponentDevSystemID } from "systems/ComponentDevSystem.sol";
@@ -43,6 +46,8 @@ import { BulkTransferSystem, ID as BulkTransferSystemID } from "systems/BulkTran
 import { NameSystem, ID as NameSystemID } from "systems/NameSystem.sol";
 import { InitSystem, ID as InitSystemID } from "systems/InitSystem.sol";
 import { Init2System, ID as Init2SystemID } from "systems/Init2System.sol";
+import { RegisterCreationSystem, ID as RegisterCreationSystemID } from "systems/RegisterCreationSystem.sol";
+import { ActivateCreationSystem, ID as ActivateCreationSystemID } from "systems/ActivateCreationSystem.sol";
 
 struct DeployResult {
   IWorld world;
@@ -108,6 +113,18 @@ library LibDeploy {
       console.log("Deploying NameComponent");
       comp = new NameComponent(address(result.world));
       console.log(address(comp));
+
+      console.log("Deploying CreationBlocksComponent");
+      comp = new CreationBlocksComponent(address(result.world));
+      console.log(address(comp));
+
+      console.log("Deploying CreationOwnerComponent");
+      comp = new CreationOwnerComponent(address(result.world));
+      console.log(address(comp));
+
+      console.log("Deploying ActivatedCreationComponent");
+      comp = new ActivatedCreationComponent(address(result.world));
+      console.log(address(comp));
     } 
     
     // Deploy systems 
@@ -148,6 +165,9 @@ library LibDeploy {
     authorizeWriter(components, StakeComponentID, address(system));
     authorizeWriter(components, ClaimComponentID, address(system));
     authorizeWriter(components, NameComponentID, address(system));
+    authorizeWriter(components, CreationBlocksComponentID, address(system));
+    authorizeWriter(components, CreationOwnerComponentID, address(system));
+    authorizeWriter(components, ActivatedCreationComponentID, address(system));
     console.log(address(system));
 
     console.log("Deploying BulkSetStateSystem");
@@ -163,6 +183,9 @@ library LibDeploy {
     authorizeWriter(components, StakeComponentID, address(system));
     authorizeWriter(components, ClaimComponentID, address(system));
     authorizeWriter(components, NameComponentID, address(system));
+    authorizeWriter(components, CreationBlocksComponentID, address(system));
+    authorizeWriter(components, CreationOwnerComponentID, address(system));
+    authorizeWriter(components, ActivatedCreationComponentID, address(system));
     console.log(address(system));
 
     console.log("Deploying MineSystem");
@@ -251,6 +274,19 @@ library LibDeploy {
     world.registerSystem(address(system), Init2SystemID);
     authorizeWriter(components, RecipeComponentID, address(system));
       if(init) system.execute(new bytes(0));
+    console.log(address(system));
+
+    console.log("Deploying RegisterCreationSystem");
+    system = new RegisterCreationSystem(world, address(components));
+    world.registerSystem(address(system), RegisterCreationSystemID);
+    authorizeWriter(components, CreationOwnerComponentID, address(system));
+    authorizeWriter(components, CreationBlocksComponentID, address(system));
+    console.log(address(system));
+
+    console.log("Deploying ActivateCreationSystem");
+    system = new ActivateCreationSystem(world, address(components));
+    world.registerSystem(address(system), ActivateCreationSystemID);
+    authorizeWriter(components, ActivatedCreationComponentID, address(system));
     console.log(address(system));
   }
 }
