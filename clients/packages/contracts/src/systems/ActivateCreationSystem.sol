@@ -6,12 +6,11 @@ import { getAddressById, addressToEntity } from "solecs/utils.sol";
 import { PositionComponent, ID as PositionComponentID } from "../components/PositionComponent.sol";
 import { ItemComponent, ID as ItemComponentID } from "../components/ItemComponent.sol";
 import { OwnedByComponent, ID as OwnedByComponentID } from "../components/OwnedByComponent.sol";
-import { ClaimComponent, ID as ClaimComponentID, Claim } from "../components/ClaimComponent.sol";
+import { CreationOwnerComponent, ID as CreationOwnerComponentID } from "../components/CreationOwnerComponent.sol";
+import { CreationBlocksComponent, ID as CreationBlocksComponentID, Block, unmarshalBlocks } from "../components/CreationBlocksComponent.sol";
 import { getClaimAtCoord } from "../systems/ClaimSystem.sol";
 import { VoxelCoord } from "../types.sol";
 import { AirID } from "../prototypes/Blocks.sol";
-import "../components/CreationOwnerComponent.sol";
-import "../components/CreationBlocksComponent.sol";
 
 uint256 constant ID = uint256(keccak256("system.ActivateCreation"));
 
@@ -24,30 +23,35 @@ contract ActivateCreationSystem is System {
 
         // Initialize components
         CreationOwnerComponent creationOwnerComponent = CreationOwnerComponent(getAddressById(components, CreationOwnerComponentID));
+        PositionComponent positionComponent = PositionComponent(getAddressById(components, PositionComponentID));
+        CreationBlocksComponent creationBlocksComponent = CreationBlocksComponent(getAddressById(components, CreationBlocksComponentID));
 
-        // TODO: allow people other than the owner to activate creations
         // require creation to be owned by caller
+        // TODO: Allow people other than the owner to activate creations
         require(creationOwnerComponent.getValue(creationId) == addressToEntity(msg.sender), "creation is now owned by player");
 
-        // spawn the creation at the lowerSouthwestCoord
-        // determine the upper north east coord
+        // before spawning the creation at the lowerSouthwestCoord, we need to verify that the area in OPCraft is all air
+        Block[] memory blocks = unmarshalBlocks(creationBlocksComponent.getValue(creationId));
+        for(uint32 i= 0; i < blocks.length;i++){
+            Block memory block = blocks[i];
+            VoxelCoord memory coord = VoxelCoord({
+                x: lowerSouthwestCoord.x + block.x,
+                y: lowerSouthwestCoord.y + block.y,
+                z: lowerSouthwestCoord.z + block.z
+            });
 
-        // require that all the blocks in the specified location is air
-
-        // Require no other ECS blocks at this position except Air
-        uint256[] memory entitiesAtPosition = positionComponent.getEntitiesWithValue(coord);
-        require(entitiesAtPosition.length == 0 || entitiesAtPosition.length == 1, "can not built at non-empty coord");
-        if (entitiesAtPosition.length == 1) {
-            ItemComponent itemComponent = ItemComponent(getAddressById(components, ItemComponentID));
-            require(itemComponent.getValue(entitiesAtPosition[0]) == AirID, "can not built at non-empty coord (2)");
+            // now that we have the coord of the block in OPCraft, verify that it's air
+            uint256[] memory entitiesAtPosition = positionComponent.getEntitiesWithValue(coord);
+            require(entitiesAtPosition.length == 0 || entitiesAtPosition.length == 1, "An entity at coord is non-empty: " + coord.x + "," + coord.y + "," + coord.z);
+            if (entitiesAtPosition.length == 1) {
+                ItemComponent itemComponent = ItemComponent(getAddressById(components, ItemComponentID));
+                require(itemComponent.getValue(entitiesAtPosition[0]) == AirID, "All blocks in the volume the creation occupies must be air. This block is not air: " + coord.x + "," + coord.y + "," + coord.z);
+            }
         }
 
         // TODO: check chunk claim? We need to verify all chunks in the selection belong to the player
-        // Check claim in chunk
-//        uint256 claimer = getClaimAtCoord(claimComponent, coord).claimer;
-//        require(claimer == 0 || claimer == addressToEntity(msg.sender), "can not build in claimed chunk");
-
-        // TODO: remove user's resources
+        // TODO: check user's resources and remove user's resources
+        // TODO: set the position of all the blocks in the creation so it shows up on OPCraft. We don't need to update it, just show it
     }
 
     function executeTyped(uint256 creationId, VoxelCoord memory lowerSouthwestCoord) public returns (bytes memory) {

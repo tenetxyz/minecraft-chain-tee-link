@@ -3,15 +3,11 @@ pragma solidity >=0.8.0;
 import "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, addressToEntity } from "solecs/utils.sol";
-import { PositionComponent, ID as PositionComponentID } from "../components/PositionComponent.sol";
-import { ItemComponent, ID as ItemComponentID } from "../components/ItemComponent.sol";
-import { OwnedByComponent, ID as OwnedByComponentID } from "../components/OwnedByComponent.sol";
-import { ClaimComponent, ID as ClaimComponentID, Claim } from "../components/ClaimComponent.sol";
+import { CreationOwnerComponent, ID as CreationOwnerComponentID } from "../components/CreationOwnerComponent.sol";
+import { CreationBlocksComponent, ID as CreationBlocksComponentID } from "../components/CreationBlocksComponent.sol";
 import { getClaimAtCoord } from "../systems/ClaimSystem.sol";
 import { VoxelCoord } from "../types.sol";
 import { AirID } from "../prototypes/Blocks.sol";
-import "../components/CreationOwnerComponent.sol";
-import "../components/CreationBlocksComponent.sol";
 
 uint256 constant ID = uint256(keccak256("system.RegisterCreation"));
 
