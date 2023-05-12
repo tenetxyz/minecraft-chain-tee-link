@@ -11,6 +11,7 @@ import { getClaimAtCoord } from "../systems/ClaimSystem.sol";
 import { VoxelCoord } from "../types.sol";
 import { AirID } from "../prototypes/Blocks.sol";
 import "../components/CreationOwnerComponent.sol";
+import "../components/CreationBlocksComponent.sol";
 
 uint256 constant ID = uint256(keccak256("system.ActivateCreation"));
 
