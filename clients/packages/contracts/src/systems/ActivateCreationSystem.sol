@@ -10,6 +10,7 @@ import { Creation, OpcBlock, CreationComponent, ID as CreationComponentID} from 
 import { getClaimAtCoord } from "../systems/ClaimSystem.sol";
 import { VoxelCoord } from "../types.sol";
 import { AirID } from "../prototypes/Blocks.sol";
+import { PinkWoolID } from "../prototypes/Blocks.sol";
 
 uint256 constant ID = uint256(keccak256("system.ActivateCreation"));
 
@@ -31,14 +32,18 @@ contract ActivateCreationSystem is System {
 
         // before spawning the creation at the lowerSouthwestCoord, we need to verify that the area in OPCraft is all air
         OpcBlock[] memory opcBlocks = creation.opcBlocks;
-        for(uint32 i= 0; i < opcBlocks.length;i++){
+        VoxelCoord[] memory coordsInOpCraft = new VoxelCoord[](opcBlocks.length);
+        for(uint32 i= 0; i < opcBlocks.length; i++){
             OpcBlock memory opcBlock = opcBlocks[i];
-            VoxelCoord memory coord = VoxelCoord({
+            coordsInOpCraft[i] = VoxelCoord({
                 x: lowerSouthwestCoord.x + opcBlock.relativeX,
                 y: lowerSouthwestCoord.y + opcBlock.relativeY,
                 z: lowerSouthwestCoord.z + opcBlock.relativeZ
             });
+        }
 
+        for(uint32 i= 0; i < coordsInOpCraft.length; i++){
+            VoxelCoord memory coord = coordsInOpCraft[i];
             // now that we have the coord of the block in OPCraft, verify that it's air
             uint256[] memory entitiesAtPosition = positionComponent.getEntitiesWithValue(coord);
             require(entitiesAtPosition.length == 0 || entitiesAtPosition.length == 1, string(abi.encodePacked("An entity at coord is non-empty: ", coord.x, ",", coord.y, ",", coord.z)));
@@ -50,7 +55,13 @@ contract ActivateCreationSystem is System {
 
         // TODO: check chunk claim? We need to verify all chunks in the selection belong to the player
         // TODO: check user's resources and remove user's resources
-        // TODO: set the position of all the blocks in the creation so it shows up on OPCraft. We don't need to update it, just show it
+
+        // Set the position of all the blocks in the creation so it shows up on OPCraft. We don't need to update it, just show it
+        // TODO: update this to show the actual blocks when we've added more blocks
+        for(uint32 i= 0; i < coordsInOpCraft.length; i++){
+            VoxelCoord memory coord = coordsInOpCraft[i];
+            positionComponent.set(PinkWoolID, coord);
+        }
     }
 
     function executeTyped(uint256 creationId, VoxelCoord memory lowerSouthwestCoord) public returns (bytes memory) {
