@@ -6,8 +6,7 @@ import { getAddressById, addressToEntity } from "solecs/utils.sol";
 import { PositionComponent, ID as PositionComponentID } from "../components/PositionComponent.sol";
 import { ItemComponent, ID as ItemComponentID } from "../components/ItemComponent.sol";
 import { OwnedByComponent, ID as OwnedByComponentID } from "../components/OwnedByComponent.sol";
-import { CreationOwnerComponent, ID as CreationOwnerComponentID } from "../components/CreationOwnerComponent.sol";
-import { CreationBlocksComponent, ID as CreationBlocksComponentID, OpcBlock} from "../components/CreationBlocksComponent.sol";
+import { Creation, OpcBlock, CreationComponent, ID as CreationComponentID} from "../components/CreationComponent.sol";
 import { getClaimAtCoord } from "../systems/ClaimSystem.sol";
 import { VoxelCoord } from "../types.sol";
 import { AirID } from "../prototypes/Blocks.sol";
@@ -22,22 +21,22 @@ contract ActivateCreationSystem is System {
         // use msg.sender
 
         // Initialize components
-        CreationOwnerComponent creationOwnerComponent = CreationOwnerComponent(getAddressById(components, CreationOwnerComponentID));
+        CreationComponent creationComponent = CreationComponent(getAddressById(components, CreationComponentID));
         PositionComponent positionComponent = PositionComponent(getAddressById(components, PositionComponentID));
-        CreationBlocksComponent creationBlocksComponent = CreationBlocksComponent(getAddressById(components, CreationBlocksComponentID));
 
         // require creation to be owned by caller
         // TODO: Allow people other than the owner to activate creations
-        require(creationOwnerComponent.getValue(creationId) == msg.sender, "creation is now owned by player");
+        Creation memory creation = creationComponent.getValue(creationId);
+        require(creation.owner == msg.sender, "You must own this creation to activate it");
 
         // before spawning the creation at the lowerSouthwestCoord, we need to verify that the area in OPCraft is all air
-        OpcBlock[] memory opcBlocks = creationBlocksComponent.unmarshalBlocks(creationBlocksComponent.getValue(creationId));
+        OpcBlock[] memory opcBlocks = creation.opcBlocks;
         for(uint32 i= 0; i < opcBlocks.length;i++){
             OpcBlock memory opcBlock = opcBlocks[i];
             VoxelCoord memory coord = VoxelCoord({
-                x: lowerSouthwestCoord.x + opcBlock.x,
-                y: lowerSouthwestCoord.y + opcBlock.y,
-                z: lowerSouthwestCoord.z + opcBlock.z
+                x: lowerSouthwestCoord.x + opcBlock.relativeX,
+                y: lowerSouthwestCoord.y + opcBlock.relativeY,
+                z: lowerSouthwestCoord.z + opcBlock.relativeZ
             });
 
             // now that we have the coord of the block in OPCraft, verify that it's air

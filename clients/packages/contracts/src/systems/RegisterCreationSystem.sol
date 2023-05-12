@@ -3,8 +3,7 @@ pragma solidity >=0.8.0;
 import "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, addressToEntity } from "solecs/utils.sol";
-import { CreationOwnerComponent, ID as CreationOwnerComponentID } from "../components/CreationOwnerComponent.sol";
-import { CreationBlocksComponent, ID as CreationBlocksComponentID } from "../components/CreationBlocksComponent.sol";
+import { Creation, OpcBlock, CreationComponent, ID as CreationComponentID } from "../components/CreationComponent.sol";
 import { getClaimAtCoord } from "../systems/ClaimSystem.sol";
 import { VoxelCoord } from "../types.sol";
 import { AirID } from "../prototypes/Blocks.sol";
@@ -15,25 +14,22 @@ contract RegisterCreationSystem is System {
     constructor(IWorld _world, address _components) System(_world, _components) {}
 
     function execute(bytes memory arguments) public returns (bytes memory) {
-        (address creationOwner, uint256[] memory opcBlocks) = abi.decode(arguments, (address, uint256[]));
-
-        // we are not using msg.sender to register the creationOwner since it's coming from the mc server
-        // This MC server is trusted to register creations on behalf of the player
-
+        (OpcBlock[] memory opcBlocks) = abi.decode(arguments, (OpcBlock[]));
         // Initialize components
-        CreationOwnerComponent creationOwnerComponent = CreationOwnerComponent(getAddressById(components, CreationOwnerComponentID));
-        CreationBlocksComponent creationBlocksComponent = CreationBlocksComponent(getAddressById(components, CreationBlocksComponentID));
+        CreationComponent creationComponent = CreationComponent(getAddressById(components, CreationComponentID));
 
-        require(opcBlocks.length <= 200, "Your creation cannot exceed 100 blocks");
+        require(opcBlocks.length <= 100, "Your creation cannot exceed 100 blocks");
 
-        uint256 creationId = uint256(keccak256(abi.encodePacked(opcBlocks))); // Note: we only hash the blocks, and not the owner, so we can see if this arrangement has been made before
-        require(!creationOwnerComponent.has(creationId), string(abi.encodePacked("This creation has already been created by ", creationOwnerComponent.getValue(creationId) , ". This creation's id is " , creationId)));
+        // assume msg.sender is the creation owner
+        Creation memory creation = Creation(msg.sender, opcBlocks);
 
-        creationOwnerComponent.set(creationId, creationOwner);
-        creationBlocksComponent.set(creationId, opcBlocks);
+        uint256 creationId = creationComponent.getCreationId(creation); // Note: we only hash the blocks, and not the owner, so we can see if this arrangement has been made before
+        require(!creationComponent.has(creationId), string(abi.encodePacked("This creation has already been created. The owner is ", creationComponent.getValue(creationId).owner , ". This creation's id is " , creationId)));
+
+        creationComponent.set(creationId, creation);
     }
 
-    function executeTyped(address creationOwner, uint256[] memory opcBlocks) public returns (bytes memory) {
+    function executeTyped(address creationOwner, OpcBlock[] memory opcBlocks) public returns (bytes memory) {
         return execute(abi.encode(creationOwner, opcBlocks));
     }
 }

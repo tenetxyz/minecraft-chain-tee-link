@@ -26,8 +26,7 @@ import { OccurrenceComponent, ID as OccurrenceComponentID } from "components/Occ
 import { StakeComponent, ID as StakeComponentID } from "components/StakeComponent.sol";
 import { ClaimComponent, ID as ClaimComponentID } from "components/ClaimComponent.sol";
 import { NameComponent, ID as NameComponentID } from "components/NameComponent.sol";
-import { CreationBlocksComponent, ID as CreationBlocksComponentID } from "components/CreationBlocksComponent.sol";
-import { CreationOwnerComponent, ID as CreationOwnerComponentID } from "components/CreationOwnerComponent.sol";
+import { CreationComponent, ID as CreationComponentID } from "components/CreationComponent.sol";
 import { ActivatedCreationComponent, ID as ActivatedCreationComponentID } from "components/ActivatedCreationComponent.sol";
 
 // Systems (requires 'systems=...' remapping in project's remappings.txt)
@@ -114,12 +113,8 @@ library LibDeploy {
       comp = new NameComponent(address(result.world));
       console.log(address(comp));
 
-      console.log("Deploying CreationBlocksComponent");
-      comp = new CreationBlocksComponent(address(result.world));
-      console.log(address(comp));
-
-      console.log("Deploying CreationOwnerComponent");
-      comp = new CreationOwnerComponent(address(result.world));
+      console.log("Deploying CreationComponent");
+      comp = new CreationComponent(address(result.world));
       console.log(address(comp));
 
       console.log("Deploying ActivatedCreationComponent");
@@ -165,8 +160,7 @@ library LibDeploy {
     authorizeWriter(components, StakeComponentID, address(system));
     authorizeWriter(components, ClaimComponentID, address(system));
     authorizeWriter(components, NameComponentID, address(system));
-    authorizeWriter(components, CreationBlocksComponentID, address(system));
-    authorizeWriter(components, CreationOwnerComponentID, address(system));
+    authorizeWriter(components, CreationComponentID, address(system));
     authorizeWriter(components, ActivatedCreationComponentID, address(system));
     console.log(address(system));
 
@@ -183,8 +177,7 @@ library LibDeploy {
     authorizeWriter(components, StakeComponentID, address(system));
     authorizeWriter(components, ClaimComponentID, address(system));
     authorizeWriter(components, NameComponentID, address(system));
-    authorizeWriter(components, CreationBlocksComponentID, address(system));
-    authorizeWriter(components, CreationOwnerComponentID, address(system));
+    authorizeWriter(components, CreationComponentID, address(system));
     authorizeWriter(components, ActivatedCreationComponentID, address(system));
     console.log(address(system));
 
@@ -279,8 +272,7 @@ library LibDeploy {
     console.log("Deploying RegisterCreationSystem");
     system = new RegisterCreationSystem(world, address(components));
     world.registerSystem(address(system), RegisterCreationSystemID);
-    authorizeWriter(components, CreationOwnerComponentID, address(system));
-    authorizeWriter(components, CreationBlocksComponentID, address(system));
+    authorizeWriter(components, CreationComponentID, address(system));
     console.log(address(system));
 
     console.log("Deploying ActivateCreationSystem");
