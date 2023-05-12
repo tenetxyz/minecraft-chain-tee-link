@@ -12,8 +12,8 @@
 3. Edit bukkit.yml
     - `allow-end: false`
     - ```
-        worlds:
-          plotworld:
-            generator: PlotSquared
+      worlds:
+        plotworld:
+          generator: PlotSquared
         ```
 4. To customize plots, edit: `plugins/PlotSquared/config/worlds.yml`
