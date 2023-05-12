@@ -16,3 +16,4 @@
           plotworld:
             generator: PlotSquared
         ```
+4. To customize plots, edit: `plugins/PlotSquared/config/worlds.yml`
