@@ -9,7 +9,9 @@
     "OccurrenceComponent",
     "StakeComponent",
     "ClaimComponent",
-    "NameComponent"
+    "NameComponent",
+    "CreationComponent",
+    "ActivatedCreationsComponent"
   ],
   "systems": [
     { "name": "ComponentDevSystem", "writeAccess": ["*"] },
@@ -34,6 +36,8 @@
       "name": "Init2System",
       "writeAccess": ["RecipeComponent"],
       "initialize": "new bytes(0)"
-    }
+    },
+    { "name": "RegisterCreationSystem", "writeAccess": ["CreationComponent"] },
+    { "name": "ActivateCreationSystem", "writeAccess": ["ActivatedCreationsComponent"] }
   ]
 }
