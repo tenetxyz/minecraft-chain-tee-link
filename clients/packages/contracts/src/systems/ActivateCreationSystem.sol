@@ -7,7 +7,7 @@ import { PositionComponent, ID as PositionComponentID } from "../components/Posi
 import { ActivatedCreationsComponent, ID as ActivatedCreationsComponentID } from "../components/ActivatedCreationsComponent.sol";
 import { ItemComponent, ID as ItemComponentID } from "../components/ItemComponent.sol";
 import { OwnedByComponent, ID as OwnedByComponentID } from "../components/OwnedByComponent.sol";
-import { CreationComponent, ID as CreationComponentID} from "../components/CreationComponent.sol";
+import { CreationComponent, ID as CreationComponentID} from "../components/BlocksComponent.sol";
 import { getClaimAtCoord } from "../systems/ClaimSystem.sol";
 import { VoxelCoord, Creation, OpcBlock, ActivatedCreation } from "../types.sol";
 import { AirID } from "../prototypes/Blocks.sol";
@@ -22,7 +22,7 @@ contract ActivateCreationSystem is System {
         (uint256 creationId, VoxelCoord memory lowerSouthwestCoord) = abi.decode(arguments, (uint256, VoxelCoord));
 
         // Initialize components
-        CreationComponent creationComponent = CreationComponent(getAddressById(components, CreationComponentID));
+        BlocksComponent creationComponent = CreationComponent(getAddressById(components, CreationComponentID));
         ActivatedCreationsComponent activatedCreationsComponent = ActivatedCreationsComponent(getAddressById(components, ActivatedCreationsComponentID));
         PositionComponent positionComponent = PositionComponent(getAddressById(components, PositionComponentID));
 

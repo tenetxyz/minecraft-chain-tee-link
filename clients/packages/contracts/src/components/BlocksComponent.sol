@@ -4,15 +4,11 @@ import "solecs/BareComponent.sol";
 
 import { Creation } from "../types.sol";
 
-uint256 constant ID = uint256(keccak256("component.Creation"));
+uint256 constant ID = uint256(keccak256("component.BlocksComponent"));
 
 // maps the creationId -> Creation
-contract CreationComponent is BareComponent {
+contract BlocksComponent is Uint256ArrayBareComponent {
     constructor(address world) BareComponent(world, ID) {}
-
-    function getCreationId(Creation memory creation) public returns (uint256) {
-        return uint256(keccak256(abi.encode(creation.opcBlocks)));
-    }
 
     function getSchema() public pure override returns (string[] memory keys, LibTypes.SchemaValue[] memory values) {
         keys = new string[](2);

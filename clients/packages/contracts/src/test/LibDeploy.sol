@@ -26,7 +26,7 @@ import { OccurrenceComponent, ID as OccurrenceComponentID } from "components/Occ
 import { StakeComponent, ID as StakeComponentID } from "components/StakeComponent.sol";
 import { ClaimComponent, ID as ClaimComponentID } from "components/ClaimComponent.sol";
 import { NameComponent, ID as NameComponentID } from "components/NameComponent.sol";
-import { CreationComponent, ID as CreationComponentID } from "components/CreationComponent.sol";
+import { CreationComponent, ID as CreationComponentID } from "components/BlocksComponent.sol";
 import { ActivatedCreationsComponent, ID as ActivatedCreationsComponentID } from "components/ActivatedCreationsComponent.sol";
 
 // Systems (requires 'systems=...' remapping in project's remappings.txt)

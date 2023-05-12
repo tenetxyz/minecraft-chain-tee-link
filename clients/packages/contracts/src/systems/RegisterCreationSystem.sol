@@ -3,12 +3,15 @@ pragma solidity >=0.8.0;
 import "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, addressToEntity } from "solecs/utils.sol";
-import { CreationComponent, ID as CreationComponentID } from "../components/CreationComponent.sol";
+import { BlocksComponent, ID as BlocksComponentID } from "../components/BlocksComponent.sol";
 import { getClaimAtCoord } from "../systems/ClaimSystem.sol";
+import { HashComponent, ID as HashComponentID} from "../components/HashComponent.sol";
 import { VoxelCoord, Creation, OpcBlock } from "../types.sol";
 import { AirID } from "../prototypes/Blocks.sol";
 
 uint256 constant ID = uint256(keccak256("system.RegisterCreation"));
+
+uint256 constant MAX_BLOCKS_IN_CREATION = 100;
 
 contract RegisterCreationSystem is System {
     constructor(IWorld _world, address _components) System(_world, _components) {}
@@ -16,21 +19,19 @@ contract RegisterCreationSystem is System {
     function execute(bytes memory arguments) public returns (bytes memory) {
         (OpcBlock[] memory opcBlocks) = abi.decode(arguments, (OpcBlock[]));
         // Initialize components
-        CreationComponent creationComponent = CreationComponent(getAddressById(components, CreationComponentID));
+        BlocksComponent blocksComponent = BlocksComponent(getAddressById(components, BlocksComponentID));
+        OwnedByComponent ownedByComponent = OwnedByComponent(getAddressById(components, OwnedByComponentID));
 
-        require(opcBlocks.length <= 100, "Your creation cannot exceed 100 blocks");
-        // TODO: should we require that all opcBlocks have coords that are non-negative? Or we do assume it's all positive
-        // having all nonnegative coords makes it easier since by default, we know where the lowerSouthwest corner is
-        
+        require(opcBlocks.length <= MAX_BLOCKS_IN_CREATION, string(abi.encodePacked("Your creation cannot exceed ", MAX_BLOCKS_IN_CREATION, " blocks")));
+
+        // check that this creation hasn't been made before
+        uint256 creationEntityId = getCreationHash(opcBlocks);
+        require(blocksComponent.has(creationEntityId) == 0, string(abi.encodePacked("This creation has already been created. The entity with the same blocks is ", "This creation's entityId is " , creationEntityId)));
+
+        // now we can safely make this new creation
         OpcBlock[] memory repositionedOpcBlocks = repositionBlocksSoLowerSouthwestCornerIsOnOrigin(opcBlocks);
-
-        // assume msg.sender is the creation owner
-        Creation memory creation = Creation(msg.sender, repositionedOpcBlocks);
-
-        uint256 creationId = creationComponent.getCreationId(creation); // Note: we only hash the blocks, and not the owner, so we can see if this arrangement has been made before
-        require(!creationComponent.has(creationId), string(abi.encodePacked("This creation has already been created. The owner is ", creationComponent.getValue(creationId).owner , ". This creation's id is " , creationId)));
-
-        creationComponent.set(creationId, creation);
+        blocksComponent.set(creationEntityId, repositionedOpcBlocks);
+        ownedByComponent.set(creationEntityId, addressToEntity(msg.sender));
     }
 
     function executeTyped(address creationOwner, OpcBlock[] memory opcBlocks) public returns (bytes memory) {
@@ -60,5 +61,9 @@ contract RegisterCreationSystem is System {
             repositionedOpcBlocks[i] = OpcBlock(opcBlock.relativeX - lowestX, opcBlock.relativeY - lowestY, opcBlock.relativeZ - lowestZ, opcBlock.blockFace, opcBlock.blockType);
         }
         return repositionedOpcBlocks;
+    }
+
+    function getCreationHash(OpcBlock[] memory opcBlocks) public returns (uint256) {
+        return uint256(keccak256(abi.encode(opcBlocks)));
     }
 }
