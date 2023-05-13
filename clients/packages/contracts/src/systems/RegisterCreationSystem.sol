@@ -49,8 +49,8 @@ contract RegisterCreationSystem is System {
         return abi.encode(creationEntityId);
     }
 
-    function executeTyped(address creationOwner, OpcBlock[] memory opcBlocks) public returns (bytes memory) {
-        return execute(abi.encode(creationOwner, opcBlocks));
+    function executeTyped(OpcBlock[] memory opcBlocks) public returns (bytes memory) {
+        return execute(abi.encode(opcBlocks));
     }
 
     function repositionBlocksSoLowerSouthwestCornerIsOnOrigin(OpcBlock[] memory opcBlocks) private returns (OpcBlock[] memory){
