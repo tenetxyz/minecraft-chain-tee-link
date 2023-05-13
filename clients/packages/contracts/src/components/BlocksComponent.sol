@@ -10,13 +10,13 @@ uint256 constant ID = uint256(keccak256("component.BlocksComponent"));
 contract BlocksComponent is Uint256ArrayBareComponent {
     constructor(address world) Uint256ArrayBareComponent(world, ID) {}
 
-    function addBlock(uint256 entityId, uint256 calldata blockEntityId) public virtual {
+    function addBlock(uint256 entityId, uint256 blockEntityId) public virtual {
         uint256[] memory oldBlocks = getValue(entityId);
         uint256[] memory newBlocks = new uint256[](oldBlocks.length + 1);
         for (uint256 i = 0; i < oldBlocks.length; i++) {
             newBlocks[i] = oldBlocks[i];
         }
-        newBlocks[oldCreations.length] = blockEntityId;
+        newBlocks[oldBlocks.length] = blockEntityId;
         set(entityId, abi.encode(newBlocks));
     }
 }

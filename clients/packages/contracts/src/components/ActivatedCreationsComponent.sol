@@ -7,9 +7,9 @@ uint256 constant ID = uint256(keccak256("component.ActivatedCreation"));
 // maps ownerId -> list of activated creationIds
 // activated creations are just entities with a position and a creationId
 contract ActivatedCreationsComponent is Uint256ArrayBareComponent {
-    constructor(address world) BareComponent(world, ID) {}
+    constructor(address world) Uint256ArrayBareComponent(world, ID) {}
 
-    function addCreation(uint256 ownerEntityId, uint256 calldata creationEntityId) public virtual {
+    function addCreation(uint256 ownerEntityId, uint256 creationEntityId) public virtual {
         uint256[] memory oldCreations = getValue(ownerEntityId);
         uint256[] memory newCreations = new uint256[](oldCreations.length + 1);
         for (uint256 i = 0; i < oldCreations.length; i++) {

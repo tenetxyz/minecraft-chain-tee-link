@@ -10,8 +10,10 @@
     "StakeComponent",
     "ClaimComponent",
     "NameComponent",
-    "CreationComponent",
-    "ActivatedCreationsComponent"
+    "BlocksComponent",
+    "BlockFaceComponent",
+    "ActivatedCreationsComponent",
+    "OfCreationComponent"
   ],
   "systems": [
     { "name": "ComponentDevSystem", "writeAccess": ["*"] },
@@ -37,7 +39,7 @@
       "writeAccess": ["RecipeComponent"],
       "initialize": "new bytes(0)"
     },
-    { "name": "RegisterCreationSystem", "writeAccess": ["CreationComponent"] },
-    { "name": "ActivateCreationSystem", "writeAccess": ["ActivatedCreationsComponent"] }
+    { "name": "RegisterCreationSystem", "writeAccess": ["PositionComponent", "BlocksComponent", "BlockFaceComponent", "OwnedByComponent"] },
+    { "name": "ActivateCreationSystem", "writeAccess": ["PositionComponent", "OfCreationComponent", "ActivatedCreationsComponent"] }
   ]
 }

@@ -3,10 +3,10 @@ pragma solidity >=0.8.0;
 import "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, addressToEntity } from "solecs/utils.sol";
-import { BlocksComponent, ID as BlocksComponentID } from "../components/BlocksComponent.sol";
+import { BlocksComponent, ID as BlocksComponentID} from "../components/BlocksComponent.sol";
 import { BlockFaceComponent, ID as BlockFaceComponentID } from "../components/BlockFaceComponent.sol";
+import { OwnedByComponent, ID as OwnedByComponentID } from "../components/OwnedByComponent.sol";
 import { getClaimAtCoord } from "../systems/ClaimSystem.sol";
-import { HashComponent, ID as HashComponentID} from "../components/HashComponent.sol";
 import { VoxelCoord, OpcBlock } from "../types.sol";
 import { AirID } from "../prototypes/Blocks.sol";
 import { PositionComponent, ID as PositionComponentID } from "../components/PositionComponent.sol";
@@ -30,17 +30,17 @@ contract RegisterCreationSystem is System {
 
         // check that this creation hasn't been made before
         uint256 creationEntityId = getCreationHash(opcBlocks);
-        require(blocksComponent.has(creationEntityId) == 0, string(abi.encodePacked("This creation has already been created. The entity with the same blocks is ", "This creation's entityId is " , creationEntityId)));
+        require(blocksComponent.has(creationEntityId), string(abi.encodePacked("This creation has already been created. The entity with the same blocks is ", "This creation's entityId is " , creationEntityId)));
 
         // now we can safely make this new creation
         OpcBlock[] memory repositionedOpcBlocks = repositionBlocksSoLowerSouthwestCornerIsOnOrigin(opcBlocks);
 
-        for(int i = 0; i < repositionedOpcBlocks.length;i++){
-            blockEntityId = world.getUniqueEntityId();
+        for(uint32 i = 0; i < repositionedOpcBlocks.length; i++){
+            uint256 blockEntityId = world.getUniqueEntityId();
 
             OpcBlock memory repositionedOpcBlock = repositionedOpcBlocks[i];
-            positionComponent.set(blockEntityId, repositionedOpcBlock[i].relativeCoord);
-            blockFaceComponent.set(blockEntityId, uint32(repositionedOpcBlock[i].blockFace));
+            positionComponent.set(blockEntityId, repositionedOpcBlock.relativeCoord);
+            blockFaceComponent.set(blockEntityId, uint32(repositionedOpcBlock.blockFace));
 
             blocksComponent.addBlock(creationEntityId, blockEntityId);
         }
