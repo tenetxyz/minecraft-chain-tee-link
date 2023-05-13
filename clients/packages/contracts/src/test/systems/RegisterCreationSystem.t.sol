@@ -9,7 +9,7 @@ import { BlocksComponent, ID as BlocksComponentID} from "../../components/Blocks
 import { VoxelCoord, BlockFace, OpcBlock } from "../../types.sol";
 import { getAddressById } from "solecs/utils.sol";
 
-contract MineSystemTest is MudTest {
+contract RegisterCreationTest is MudTest {
     constructor() MudTest(new Deploy()) {}
 
     function testRegisterCreation() public {
