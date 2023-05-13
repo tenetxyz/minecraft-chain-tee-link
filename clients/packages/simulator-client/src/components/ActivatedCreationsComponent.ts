@@ -1,10 +1,13 @@
 import { defineComponent, Type, World } from "@latticexyz/recs";
 
 export function defineActivatedCreationsComponent(world: World) {
-	return defineComponent(world, {
-		activatedCreations: Type.T, // TODO: I'm not sure how we can turn this type into ana rray of blocks
-	},{
-		id: "ActivatedCreations",
-		metadata: { contractId: "component.ActivatedCreations" },
-	});
+	// we need to manually define the component since lattice doesn't support u256arraybare components
+	// I am using the value as Type.String since the recipe component is an int array, but they defined it as a string
+	return defineComponent(
+			world,
+		{ value: Type.String },
+		{
+			id: "ActivatedCreations",
+			metadata: { contractId: "component.ActivatedCreations" },
+		});
 }
