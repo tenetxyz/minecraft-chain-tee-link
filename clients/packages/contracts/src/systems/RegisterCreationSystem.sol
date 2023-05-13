@@ -45,6 +45,8 @@ contract RegisterCreationSystem is System {
             blocksComponent.addBlock(creationEntityId, blockEntityId);
         }
         ownedByComponent.set(creationEntityId, addressToEntity(msg.sender));
+
+        return abi.encode(creationEntityId);
     }
 
     function executeTyped(address creationOwner, OpcBlock[] memory opcBlocks) public returns (bytes memory) {

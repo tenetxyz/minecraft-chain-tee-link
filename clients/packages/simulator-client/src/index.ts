@@ -2,9 +2,10 @@ import { setupMUDNetwork } from "@latticexyz/std-client";
 import { createWorld } from "@latticexyz/recs";
 import { SystemTypes } from "contracts/types/SystemTypes";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
-import { config } from "./config";
+import {config, getNetworkConfig} from "./config";
 import { defineActivatedCreationsComponent } from "./components/ActivatedCreationsComponent";
 import {OpcBlockStruct, VoxelCoordStruct} from "contracts/types/ethers-contracts/RegisterCreationSystem";
+import {defineBlocksComponent} from "./components/BlocksComponent";
 
 // The world contains references to all entities, all components and disposers.
 const world = createWorld();
@@ -15,7 +16,7 @@ console.log("running");
 // component contract (in this case `CounterComponent.sol`)
 const components = {
   ActivatedCreationsComponent: defineActivatedCreationsComponent(world),
-  RegisterCreationsComponent: defineActivatedCreationsComponent(world),
+  BlocksComponent: defineBlocksComponent(world),
 };
 
 const SIMULATOR_API_SERVER = "http://localhost:4500";
@@ -31,7 +32,7 @@ components.ActivatedCreationsComponent.update$.subscribe(({ value }) => {
   });
 });
 // we don't need faucets to drip cause we are just an observer
-components.RegisterCreationComponent.update$.subscribe(({ value }) => {
+components.BlocksComponent.update$.subscribe(({ value }) => {
   console.log("activated creations");
   console.log(value);
   fetch(SIMULATOR_API_SERVER).then((res) => {
@@ -54,8 +55,13 @@ const createOpcBlock = (x:number,y:number,z:number,face:number,type:number):OpcB
 }
 
 // This is where the magic happens
-setupMUDNetwork<typeof components, SystemTypes>(config, world, components, SystemAbis).then(
+// setupMUDNetwork<typeof components, SystemTypes>(config, world, components, SystemAbis).then(
+setupMUDNetwork<typeof components, SystemTypes>(config, world, components, SystemAbis, {
+    initialGasPrice: 2_000_000,
+  }).then(
+
   ({ startSync, systems }) => {
+    // why is systems an empty object here?
     startSync();
 
     const blocks = [
@@ -63,10 +69,16 @@ setupMUDNetwork<typeof components, SystemTypes>(config, world, components, Syste
       createOpcBlock(0,0,0, 0,6),
       createOpcBlock(0,0,0, 0,9),
     ];
+    // debugger
+    // interesting, the systems object is not available until later
 
-    (window as any).submitCreation = () => systems["system.RegisterCreation"].executeTyped(
-       "me",
-      blocks,
-    );
+    (window as any).submitCreation = () => {
+      console.log("register")
+      console.log(systems["system.RegisterCreation"]);
+      systems["system.RegisterCreation"].executeTyped(
+        "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+        blocks,{ gasLimit: 1_000_000 }
+      );
+    }
   }
 );

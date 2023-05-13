@@ -11,3 +11,4 @@ When adding new facets or new functions to existing facets, make sure to add the
 ### Adding new Systems or Components
 
 Modify deploy.json and run `yarn mud codegen-libdeploy --out src/test` to regenerate the LibDeploy.sol test script
+How to run a single test: `yarn mud test --forgeOpts='-m testRegisterCreation'`
