@@ -6,7 +6,6 @@ import { Creation } from "../types.sol";
 
 uint256 constant ID = uint256(keccak256("component.OfCreationComponent"));
 
-// maps block -> creationId
 // maps activatedCreation -> creationId
 contract OfCreationComponent is Uint256Component {
     constructor(address world) Uint256Component(world, ID) {}

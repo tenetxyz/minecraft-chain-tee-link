@@ -21,14 +21,3 @@ struct OpcBlock { // OpcBlock = OPCraft block. we cannot use the word "Block" si
   BlockFace blockFace;
   uint256 blockType; // search for this in the bukkit codebase to find the block type: NORTH((byte)0, (byte)0, (byte)-1, BlockFace.EnumAxis.Z),
 }
-
-struct Creation {
-  address owner; // TODO: should we change this to entityId? I'm keeping it an address for now for simplicity
-  OpcBlock[] opcBlocks;
-}
-
-struct ActivatedCreation {
-  VoxelCoord coord;
-  uint256 creationId;
-}
-
