@@ -10,7 +10,7 @@ import { OwnedByComponent, ID as OwnedByComponentID } from "../components/OwnedB
 import { BlocksComponent, ID as BlocksComponentID} from "../components/BlocksComponent.sol";
 import { OfCreationComponent, ID as OfCreationComponentID} from "../components/OfCreationComponent.sol";
 import { getClaimAtCoord } from "../systems/ClaimSystem.sol";
-import { VoxelCoord, Creation, OpcBlock } from "../types.sol";
+import { VoxelCoord, OpcBlock } from "../types.sol";
 import { AirID } from "../prototypes/Blocks.sol";
 import { PinkWoolID } from "../prototypes/Blocks.sol";
 

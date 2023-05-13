@@ -11,7 +11,7 @@
     "ClaimComponent",
     "NameComponent",
     "BlocksComponent",
-    "BlockFaceComponent",
+    "BlockMetadataComponent",
     "ActivatedCreationsComponent",
     "OfCreationComponent"
   ],
@@ -39,7 +39,7 @@
       "writeAccess": ["RecipeComponent"],
       "initialize": "new bytes(0)"
     },
-    { "name": "RegisterCreationSystem", "writeAccess": ["PositionComponent", "BlocksComponent", "BlockFaceComponent", "OwnedByComponent"] },
+    { "name": "RegisterCreationSystem", "writeAccess": ["PositionComponent", "BlocksComponent", "BlockMetadataComponent", "OwnedByComponent"] },
     { "name": "ActivateCreationSystem", "writeAccess": ["PositionComponent", "OfCreationComponent", "ActivatedCreationsComponent"] }
   ]
 }

@@ -27,7 +27,7 @@ import { StakeComponent, ID as StakeComponentID } from "components/StakeComponen
 import { ClaimComponent, ID as ClaimComponentID } from "components/ClaimComponent.sol";
 import { NameComponent, ID as NameComponentID } from "components/NameComponent.sol";
 import { BlocksComponent, ID as BlocksComponentID } from "components/BlocksComponent.sol";
-import { BlockFaceComponent, ID as BlockFaceComponentID } from "components/BlockFaceComponent.sol";
+import { BlockMetadataComponent, ID as BlockMetadataComponentID } from "components/BlockMetadataComponent.sol";
 import { ActivatedCreationsComponent, ID as ActivatedCreationsComponentID } from "components/ActivatedCreationsComponent.sol";
 import { OfCreationComponent, ID as OfCreationComponentID } from "components/OfCreationComponent.sol";
 
@@ -119,8 +119,8 @@ library LibDeploy {
       comp = new BlocksComponent(address(result.world));
       console.log(address(comp));
 
-      console.log("Deploying BlockFaceComponent");
-      comp = new BlockFaceComponent(address(result.world));
+      console.log("Deploying BlockMetadataComponent");
+      comp = new BlockMetadataComponent(address(result.world));
       console.log(address(comp));
 
       console.log("Deploying ActivatedCreationsComponent");
@@ -171,7 +171,7 @@ library LibDeploy {
     authorizeWriter(components, ClaimComponentID, address(system));
     authorizeWriter(components, NameComponentID, address(system));
     authorizeWriter(components, BlocksComponentID, address(system));
-    authorizeWriter(components, BlockFaceComponentID, address(system));
+    authorizeWriter(components, BlockMetadataComponentID, address(system));
     authorizeWriter(components, ActivatedCreationsComponentID, address(system));
     authorizeWriter(components, OfCreationComponentID, address(system));
     console.log(address(system));
@@ -190,7 +190,7 @@ library LibDeploy {
     authorizeWriter(components, ClaimComponentID, address(system));
     authorizeWriter(components, NameComponentID, address(system));
     authorizeWriter(components, BlocksComponentID, address(system));
-    authorizeWriter(components, BlockFaceComponentID, address(system));
+    authorizeWriter(components, BlockMetadataComponentID, address(system));
     authorizeWriter(components, ActivatedCreationsComponentID, address(system));
     authorizeWriter(components, OfCreationComponentID, address(system));
     console.log(address(system));
@@ -288,7 +288,7 @@ library LibDeploy {
     world.registerSystem(address(system), RegisterCreationSystemID);
     authorizeWriter(components, PositionComponentID, address(system));
     authorizeWriter(components, BlocksComponentID, address(system));
-    authorizeWriter(components, BlockFaceComponentID, address(system));
+    authorizeWriter(components, BlockMetadataComponentID, address(system));
     authorizeWriter(components, OwnedByComponentID, address(system));
     console.log(address(system));
 

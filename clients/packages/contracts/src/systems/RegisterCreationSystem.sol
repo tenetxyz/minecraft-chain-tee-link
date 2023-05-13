@@ -4,7 +4,7 @@ import "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, addressToEntity } from "solecs/utils.sol";
 import { BlocksComponent, ID as BlocksComponentID} from "../components/BlocksComponent.sol";
-import { BlockFaceComponent, ID as BlockFaceComponentID } from "../components/BlockFaceComponent.sol";
+import { BlockMetadataComponent, ID as BlockMetadataComponentID } from "../components/BlockMetadataComponent.sol";
 import { OwnedByComponent, ID as OwnedByComponentID } from "../components/OwnedByComponent.sol";
 import { getClaimAtCoord } from "../systems/ClaimSystem.sol";
 import { VoxelCoord, OpcBlock } from "../types.sol";
@@ -22,7 +22,7 @@ contract RegisterCreationSystem is System {
         (OpcBlock[] memory opcBlocks) = abi.decode(arguments, (OpcBlock[]));
         // Initialize components
         BlocksComponent blocksComponent = BlocksComponent(getAddressById(components, BlocksComponentID));
-        BlockFaceComponent blockFaceComponent = BlockFaceComponent(getAddressById(components, BlockFaceComponentID));
+        BlockMetadataComponent blockMetadataComponent = BlockMetadataComponent(getAddressById(components, BlockMetadataComponentID));
         OwnedByComponent ownedByComponent = OwnedByComponent(getAddressById(components, OwnedByComponentID));
         PositionComponent positionComponent = PositionComponent(getAddressById(components, PositionComponentID));
 
@@ -40,7 +40,7 @@ contract RegisterCreationSystem is System {
 
             OpcBlock memory repositionedOpcBlock = repositionedOpcBlocks[i];
             positionComponent.set(blockEntityId, repositionedOpcBlock.relativeCoord);
-            blockFaceComponent.set(blockEntityId, uint32(repositionedOpcBlock.blockFace));
+            blockMetadataComponent.set(blockEntityId, repositionedOpcBlock.blockFace, repositionedOpcBlock.blockType);
 
             blocksComponent.addBlock(creationEntityId, blockEntityId);
         }
