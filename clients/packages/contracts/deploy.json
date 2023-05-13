@@ -13,7 +13,8 @@
     "BlocksComponent",
     "BlockMetadataComponent",
     "ActivatedCreationsComponent",
-    "OfCreationComponent"
+    "OfCreationComponent",
+    "ResourceCountComponent"
   ],
   "systems": [
     { "name": "ComponentDevSystem", "writeAccess": ["*"] },
@@ -40,6 +41,7 @@
       "initialize": "new bytes(0)"
     },
     { "name": "RegisterCreationSystem", "writeAccess": ["PositionComponent", "BlocksComponent", "BlockMetadataComponent", "OwnedByComponent"] },
-    { "name": "ActivateCreationSystem", "writeAccess": ["PositionComponent", "OfCreationComponent", "ActivatedCreationsComponent"] }
+    { "name": "ActivateCreationSystem", "writeAccess": ["PositionComponent", "OfCreationComponent", "ActivatedCreationsComponent"] },
+    { "name": "CollectResourcesSystem", "writeAccess": ["ResourceCountComponent"] }
   ]
 }
