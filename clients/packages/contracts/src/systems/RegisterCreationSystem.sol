@@ -4,10 +4,12 @@ import "solecs/System.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, addressToEntity } from "solecs/utils.sol";
 import { BlocksComponent, ID as BlocksComponentID } from "../components/BlocksComponent.sol";
+import { BlockFaceComponent, ID as BlockFaceComponentID } from "../components/BlockFaceComponent.sol";
 import { getClaimAtCoord } from "../systems/ClaimSystem.sol";
 import { HashComponent, ID as HashComponentID} from "../components/HashComponent.sol";
-import { VoxelCoord, Creation, OpcBlock } from "../types.sol";
+import { VoxelCoord, OpcBlock } from "../types.sol";
 import { AirID } from "../prototypes/Blocks.sol";
+import { PositionComponent, ID as PositionComponentID } from "../components/PositionComponent.sol";
 
 uint256 constant ID = uint256(keccak256("system.RegisterCreation"));
 
@@ -20,7 +22,9 @@ contract RegisterCreationSystem is System {
         (OpcBlock[] memory opcBlocks) = abi.decode(arguments, (OpcBlock[]));
         // Initialize components
         BlocksComponent blocksComponent = BlocksComponent(getAddressById(components, BlocksComponentID));
+        BlockFaceComponent blockFaceComponent = BlockFaceComponent(getAddressById(components, BlockFaceComponentID));
         OwnedByComponent ownedByComponent = OwnedByComponent(getAddressById(components, OwnedByComponentID));
+        PositionComponent positionComponent = PositionComponent(getAddressById(components, PositionComponentID));
 
         require(opcBlocks.length <= MAX_BLOCKS_IN_CREATION, string(abi.encodePacked("Your creation cannot exceed ", MAX_BLOCKS_IN_CREATION, " blocks")));
 
@@ -30,7 +34,16 @@ contract RegisterCreationSystem is System {
 
         // now we can safely make this new creation
         OpcBlock[] memory repositionedOpcBlocks = repositionBlocksSoLowerSouthwestCornerIsOnOrigin(opcBlocks);
-        blocksComponent.set(creationEntityId, repositionedOpcBlocks);
+
+        for(int i = 0; i < repositionedOpcBlocks.length;i++){
+            blockEntityId = world.getUniqueEntityId();
+
+            OpcBlock memory repositionedOpcBlock = repositionedOpcBlocks[i];
+            positionComponent.set(blockEntityId, repositionedOpcBlock[i].relativeCoord);
+            blockFaceComponent.set(blockEntityId, uint32(repositionedOpcBlock[i].blockFace));
+
+            blocksComponent.addBlock(creationEntityId, blockEntityId);
+        }
         ownedByComponent.set(creationEntityId, addressToEntity(msg.sender));
     }
 
@@ -45,20 +58,21 @@ contract RegisterCreationSystem is System {
         int32 lowestZ = 0;
         for (uint32 i = 0; i < opcBlocks.length; i++) {
             OpcBlock memory opcBlock = opcBlocks[i];
-            if (opcBlock.relativeX < lowestX) {
-                lowestX = opcBlock.relativeX;
+            if (opcBlock.relativeCoord.x < lowestX) {
+                lowestX = opcBlock.relativeCoord.x;
             }
-            if (opcBlock.relativeY < lowestY) {
-                lowestY = opcBlock.relativeY;
+            if (opcBlock.relativeCoord.y < lowestY) {
+                lowestY = opcBlock.relativeCoord.y;
             }
-            if (opcBlock.relativeZ < lowestZ) {
-                lowestZ = opcBlock.relativeZ;
+            if (opcBlock.relativeCoord.z < lowestZ) {
+                lowestZ = opcBlock.relativeCoord.z;
             }
         }
 
         for (uint32 i = 0; i < opcBlocks.length; i++) {
             OpcBlock memory opcBlock = opcBlocks[i];
-            repositionedOpcBlocks[i] = OpcBlock(opcBlock.relativeX - lowestX, opcBlock.relativeY - lowestY, opcBlock.relativeZ - lowestZ, opcBlock.blockFace, opcBlock.blockType);
+            VoxelCoord memory newRelativeCoord = VoxelCoord(opcBlock.relativeCoord.x - lowestX, opcBlock.relativeCoord.y - lowestY, opcBlock.relativeCoord.z - lowestZ);
+            repositionedOpcBlocks[i] = OpcBlock(newRelativeCoord, opcBlock.blockFace, opcBlock.blockType);
         }
         return repositionedOpcBlocks;
     }

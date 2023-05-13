@@ -22,7 +22,7 @@ contract ActivateCreationSystem is System {
         (uint256 creationId, VoxelCoord memory lowerSouthwestCoord) = abi.decode(arguments, (uint256, VoxelCoord));
 
         // Initialize components
-        BlocksComponent creationComponent = CreationComponent(getAddressById(components, CreationComponentID));
+        BlocksComponent blocksComponent = BlocksComponent(getAddressById(components, BlocksComponentID));
         ActivatedCreationsComponent activatedCreationsComponent = ActivatedCreationsComponent(getAddressById(components, ActivatedCreationsComponentID));
         PositionComponent positionComponent = PositionComponent(getAddressById(components, PositionComponentID));
 
@@ -47,6 +47,9 @@ contract ActivateCreationSystem is System {
 
         // TODO: check chunk claim? We need to verify all chunks in the selection belong to the player
         // TODO: check user's resources and remove user's resources
+        uint256 activatedCreationId = world.createEntity();
+        positionComponent.set(activatedCreationId, lowerSouthwestCoord);
+        positionComponent.set(activatedCreationId, lowerSouthwestCoord);
 
         activatedCreationsComponent.addCreation(addressToEntity(msg.sender), ActivatedCreation(lowerSouthwestCoord, creationId));
 
