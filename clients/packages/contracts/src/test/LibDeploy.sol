@@ -30,6 +30,7 @@ import { BlocksComponent, ID as BlocksComponentID } from "components/BlocksCompo
 import { BlockMetadataComponent, ID as BlockMetadataComponentID } from "components/BlockMetadataComponent.sol";
 import { ActivatedCreationsComponent, ID as ActivatedCreationsComponentID } from "components/ActivatedCreationsComponent.sol";
 import { OfCreationComponent, ID as OfCreationComponentID } from "components/OfCreationComponent.sol";
+import { ResourceCountComponent, ID as ResourceCountComponentID } from "components/ResourceCountComponent.sol";
 
 // Systems (requires 'systems=...' remapping in project's remappings.txt)
 import { ComponentDevSystem, ID as ComponentDevSystemID } from "systems/ComponentDevSystem.sol";
@@ -49,6 +50,7 @@ import { InitSystem, ID as InitSystemID } from "systems/InitSystem.sol";
 import { Init2System, ID as Init2SystemID } from "systems/Init2System.sol";
 import { RegisterCreationSystem, ID as RegisterCreationSystemID } from "systems/RegisterCreationSystem.sol";
 import { ActivateCreationSystem, ID as ActivateCreationSystemID } from "systems/ActivateCreationSystem.sol";
+import { CollectResourcesSystem, ID as CollectResourcesSystemID } from "systems/CollectResourcesSystem.sol";
 
 struct DeployResult {
   IWorld world;
@@ -130,6 +132,10 @@ library LibDeploy {
       console.log("Deploying OfCreationComponent");
       comp = new OfCreationComponent(address(result.world));
       console.log(address(comp));
+
+      console.log("Deploying ResourceCountComponent");
+      comp = new ResourceCountComponent(address(result.world));
+      console.log(address(comp));
     } 
     
     // Deploy systems 
@@ -174,6 +180,7 @@ library LibDeploy {
     authorizeWriter(components, BlockMetadataComponentID, address(system));
     authorizeWriter(components, ActivatedCreationsComponentID, address(system));
     authorizeWriter(components, OfCreationComponentID, address(system));
+    authorizeWriter(components, ResourceCountComponentID, address(system));
     console.log(address(system));
 
     console.log("Deploying BulkSetStateSystem");
@@ -193,6 +200,7 @@ library LibDeploy {
     authorizeWriter(components, BlockMetadataComponentID, address(system));
     authorizeWriter(components, ActivatedCreationsComponentID, address(system));
     authorizeWriter(components, OfCreationComponentID, address(system));
+    authorizeWriter(components, ResourceCountComponentID, address(system));
     console.log(address(system));
 
     console.log("Deploying MineSystem");
@@ -298,6 +306,12 @@ library LibDeploy {
     authorizeWriter(components, PositionComponentID, address(system));
     authorizeWriter(components, OfCreationComponentID, address(system));
     authorizeWriter(components, ActivatedCreationsComponentID, address(system));
+    console.log(address(system));
+
+    console.log("Deploying CollectResourcesSystem");
+    system = new CollectResourcesSystem(world, address(components));
+    world.registerSystem(address(system), CollectResourcesSystemID);
+    authorizeWriter(components, ResourceCountComponentID, address(system));
     console.log(address(system));
   }
 }

@@ -1,7 +1,8 @@
 import { SetupContractConfig } from "@latticexyz/std-client";
-import { Wallet } from "ethers";
+// import { Wallet } from "ethers";
 const params = new URLSearchParams(window.location.search);
 
+//http://localhost:3000?chainId=31337&worldAddress=0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512&rpc=http://localhost:8545&wsRpc=ws://localhost:8545&initialBlockNumber=46&dev=true&snapshot=&stream=&relay=&faucet=&burnerWalletPrivateKey=0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
 export const config: SetupContractConfig = {
   clock: {
     period: 1000,
@@ -13,10 +14,11 @@ export const config: SetupContractConfig = {
     wsRpcUrl: params.get("wsRpc") ?? "ws://localhost:8545",
     chainId: Number(params.get("chainId")) || 31337,
   },
-  privateKey: Wallet.createRandom().privateKey,
+  //Wallet.createRandom().privateKey,
+  privateKey: "0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80",
   chainId: Number(params.get("chainId")) || 31337,
   snapshotServiceUrl: params.get("snapshot") ?? undefined,
   initialBlockNumber: Number(params.get("initialBlockNumber")) || 0,
-  worldAddress: params.get("worldAddress")!,
+  worldAddress: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",//params.get("worldAddress")!,
   devMode: params.get("dev") === "true",
 };
