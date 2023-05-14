@@ -18,7 +18,7 @@ contract RegisterCreationTest is MudTest {
         BlocksComponent blocksComponent = BlocksComponent(getAddressById(components, BlocksComponentID));
         RegisterCreationSystem registerCreationSystem = RegisterCreationSystem(system(RegisterCreationSystemID));
 
-        VoxelCoord memory relativeCoord = VoxelCoord(0, 0, 0);
+        VoxelCoord memory relativeCoord = VoxelCoord(getRandomNumber(), getRandomNumber(), getRandomNumber());
         BlockFace blockFace = BlockFace.NORTH;
         OpcBlock[] memory opcBlocks = new OpcBlock[](1);
         opcBlocks[0] = OpcBlock(relativeCoord, blockFace, 2);
@@ -26,5 +26,10 @@ contract RegisterCreationTest is MudTest {
 
         assertEq(blocksComponent.getValue(creationEntityId).length, 1);
         vm.stopPrank();
+    }
+
+    function getRandomNumber() public view returns (int32) {
+        uint randomNumber = uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty))) % 10000 + 1;
+        return int32(int256(randomNumber));
     }
 }

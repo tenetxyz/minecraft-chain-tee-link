@@ -66,8 +66,8 @@ setupMUDNetwork<typeof components, SystemTypes>(config, world, components, Syste
 
     const blocks = [
       createOpcBlock(0,0,0, 0,5),
-      createOpcBlock(0,0,0, 0,6),
-      createOpcBlock(0,0,0, 0,9),
+      createOpcBlock(0,1,0, 0,6),
+      createOpcBlock(0,0,1, 0,10),
     ];
     // debugger
     // interesting, the systems object is not available until later
@@ -76,7 +76,6 @@ setupMUDNetwork<typeof components, SystemTypes>(config, world, components, Syste
       console.log("register")
       console.log(systems["system.RegisterCreation"]);
       systems["system.RegisterCreation"].executeTyped(
-        "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
         blocks,{ gasLimit: 1_000_000 }
       );
     }
