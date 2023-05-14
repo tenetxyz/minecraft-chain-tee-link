@@ -30,7 +30,7 @@ contract RegisterCreationSystem is System {
 
         // check that this creation hasn't been made before
         uint256 creationEntityId = getCreationHash(opcBlocks);
-        require(blocksComponent.has(creationEntityId), string(abi.encodePacked("This creation has already been created. The entity with the same blocks is ", "This creation's entityId is " , creationEntityId)));
+        require(!blocksComponent.has(creationEntityId), string(abi.encodePacked("This creation has already been created. The entity with the same blocks is ", "This creation's entityId is " , creationEntityId)));
 
         // now we can safely make this new creation
         OpcBlock[] memory repositionedOpcBlocks = repositionBlocksSoLowerSouthwestCornerIsOnOrigin(opcBlocks);
@@ -45,10 +45,12 @@ contract RegisterCreationSystem is System {
             blocksComponent.addBlock(creationEntityId, blockEntityId);
         }
         ownedByComponent.set(creationEntityId, addressToEntity(msg.sender));
+
+        return abi.encode(creationEntityId);
     }
 
-    function executeTyped(address creationOwner, OpcBlock[] memory opcBlocks) public returns (bytes memory) {
-        return execute(abi.encode(creationOwner, opcBlocks));
+    function executeTyped(OpcBlock[] memory opcBlocks) public returns (bytes memory) {
+        return execute(abi.encode(opcBlocks));
     }
 
     function repositionBlocksSoLowerSouthwestCornerIsOnOrigin(OpcBlock[] memory opcBlocks) private returns (OpcBlock[] memory){

@@ -2,7 +2,7 @@
 pragma solidity >=0.8.0;
 import "std-contracts/components/Uint256ArrayBareComponent.sol";
 
-uint256 constant ID = uint256(keccak256("component.BlocksComponent"));
+uint256 constant ID = uint256(keccak256("component.Blocks"));
 
 // maps the creationId -> blocks in that creation
 contract BlocksComponent is Uint256ArrayBareComponent {
