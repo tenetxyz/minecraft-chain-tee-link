@@ -12,6 +12,7 @@ import { getAddressById } from "solecs/utils.sol";
 contract RegisterCreationTest is MudTest {
     constructor() MudTest(new Deploy()) {}
 
+//    event Log(string message);
     function testRegisterCreation() public {
 
         vm.startPrank(alice);
@@ -24,7 +25,9 @@ contract RegisterCreationTest is MudTest {
         opcBlocks[0] = OpcBlock(relativeCoord, blockFace, 2);
         uint256 creationEntityId = abi.decode(registerCreationSystem.executeTyped(opcBlocks), (uint256));
 
-        assertEq(blocksComponent.getValue(creationEntityId).length, 1);
+        uint256[] memory blocks = blocksComponent.getValue(creationEntityId);
+//        emit Log(string(abi.encodePacked(blocks[0])));
+        assertEq(blocks.length, 1);
         vm.stopPrank();
     }
 
