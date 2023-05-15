@@ -27,14 +27,11 @@ contract RegisterCreationSystem is System {
         OwnedByComponent ownedByComponent = OwnedByComponent(getAddressById(components, OwnedByComponentID));
         PositionComponent positionComponent = PositionComponent(getAddressById(components, PositionComponentID));
 
-        require(opcBlocks.length <= MAX_BLOCKS_IN_CREATION, string(abi.encodePacked("Your creation cannot exceed ", MAX_BLOCKS_IN_CREATION, " blocks")));
+        require(opcBlocks.length <= MAX_BLOCKS_IN_CREATION, string(abi.encodePacked("Your creation cannot exceed ", Strings.toString(MAX_BLOCKS_IN_CREATION), " blocks")));
 
         // check that this creation hasn't been made before
         uint256 creationEntityId = getCreationHash(opcBlocks);
-//        require(!blocksComponent.has(creationEntityId), string(abi.encode("This creation has already been created. This creation's entityId is " , creationEntityId)));
-        require(!blocksComponent.has(creationEntityId), string.concat("This creation has already been created. This creation's entityId is ", Strings.toString(creationEntityId)));
-//        require(!blocksComponent.has(creationEntityId), string("This creation has already been created. This creation's entityId is " , string(creationEntityId)));
-//        require(!blocksComponent.has(creationEntityId), "This creation has already been created");
+        require(!blocksComponent.has(creationEntityId), string(abi.encodePacked("This creation has already been created. This creation's entityId is ", Strings.toString(creationEntityId))));
 
         // now we can safely make this new creation
         OpcBlock[] memory repositionedOpcBlocks = repositionBlocksSoLowerSouthwestCornerIsOnOrigin(opcBlocks);
