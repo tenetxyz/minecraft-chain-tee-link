@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: GPL-3.0
 pragma solidity >=0.8.0;
 import "solecs/System.sol";
+import "../libraries/Utils.sol";
 import { IWorld } from "solecs/interfaces/IWorld.sol";
 import { getAddressById, addressToEntity } from "solecs/utils.sol";
 import { PositionComponent, ID as PositionComponentID } from "../components/PositionComponent.sol";
@@ -41,10 +42,10 @@ contract ActivateCreationSystem is System {
             VoxelCoord memory coord = coordsInOpCraft[i];
             // now that we have the coord of the block in OPCraft, verify that it's air
             uint256[] memory entitiesAtPosition = positionComponent.getEntitiesWithValue(coord);
-            require(entitiesAtPosition.length == 0 || entitiesAtPosition.length == 1, string(abi.encodePacked("An entity at coord is non-empty: ", coord.x, ",", coord.y, ",", coord.z)));
+            require(entitiesAtPosition.length == 0 || entitiesAtPosition.length == 1, string(abi.encodePacked("An entity at coord is non-empty: ", Utils.int32ToString(coord.x), ",", Utils.int32ToString(coord.y), ",", Utils.int32ToString(coord.z))));
             if (entitiesAtPosition.length == 1) {
                 ItemComponent itemComponent = ItemComponent(getAddressById(components, ItemComponentID));
-                require(itemComponent.getValue(entitiesAtPosition[0]) == AirID, string(abi.encodePacked("All blocks in the volume the creation occupies must be air. This block is not air: ", coord.x, ",", coord.y, ",", coord.z)));
+                require(itemComponent.getValue(entitiesAtPosition[0]) == AirID, string(abi.encodePacked("All blocks in the volume the creation occupies must be air. This block is not air: ", Utils.int32ToString(coord.x), ",", Utils.int32ToString(coord.y), ",", Utils.int32ToString(coord.z))));
             }
         }
 
