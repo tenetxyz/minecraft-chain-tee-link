@@ -1,11 +1,31 @@
 import React from "react";
 import styled from "styled-components";
 import { Button, CloseableContainer, Gold } from "./common";
+import {OpcBlockStruct, VoxelCoordStruct} from "contracts/types/ethers-contracts/RegisterCreationSystem";
 
-export const ImportCreation: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+const createOpcBlock = (x:number,y:number,z:number,face:number,type:number):OpcBlockStruct => {
+  return {
+    relativeCoord: {
+      x: x,
+      y: y,
+      z: z,
+    } as VoxelCoordStruct,
+    blockFace: face,
+    blockType: type,
+  } as OpcBlockStruct;
+}
+
+export const ImportCreation: React.FC<{ onClose: () => void; api: any }> = ({ onClose, api }) => {
 
   const registerCreation = () => {
     console.log("register creation");
+    const blocks = [
+      createOpcBlock(0,0,0, 0,5),
+      createOpcBlock(0,1,0, 0,6),
+      createOpcBlock(0,0,3, 0,10),
+    ];
+
+    api.registerCreation(blocks);
   }
 
   return (

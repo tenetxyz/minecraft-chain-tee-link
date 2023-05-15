@@ -302,13 +302,13 @@ export async function createNetworkLayer(config: GameConfig) {
     });
   }
 
-  function registerCreation(){
+  function registerCreation(blocks: any){
     actions.add({
       id: `registerCreation` as EntityID,
       metadata: { actionType: "registerCreation" },
       requirement: () => true,
       components: {},
-      execute: () => systems["system.RegisterCreation"].executeTyped({ gasLimit: 400_000 }),
+      execute: () => systems["system.RegisterCreation"].executeTyped(blocks, { gasLimit: 400_000 }),
       updates: () => [],
     });
   }
@@ -419,6 +419,7 @@ export async function createNetworkLayer(config: GameConfig) {
       craft,
       stake,
       claim,
+      registerCreation,
       transfer,
       getBlockAtPosition,
       getECSBlockAtPosition,

@@ -67,9 +67,14 @@ export function registerSidebar() {
     ({ props, layers }) => {
       const [chunk, balance, tutorial] = props;
       const {
-        components: { Tutorial },
-        SingletonEntity,
-      } = layers.noa;
+        network: {
+          api,
+        },
+        noa: {
+          components: { Tutorial },
+          SingletonEntity,
+        }
+      } = layers;
 
       function updateTutorial(update: Partial<ComponentValue<SchemaOf<typeof Tutorial>>>) {
         updateComponent(Tutorial, SingletonEntity, update);
@@ -80,7 +85,7 @@ export function registerSidebar() {
           <Balance {...balance} />
           <ChunkExplorer {...chunk} />
           {tutorial?.community && <JoinSocial onClose={() => updateTutorial({ community: false })} />}
-          {<ImportCreation onClose={() => updateTutorial({ community: false })} />}
+          {<ImportCreation api={api} onClose={() => updateTutorial({ community: false })} />}
           {tutorial?.moving && (
             <Hint onClose={() => updateTutorial({ moving: false })}>
               <Gold>Hint</Gold>: press <Gold>W, A, S, or D</Gold> to move around
