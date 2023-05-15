@@ -16,21 +16,22 @@ contract BlockMetadataComponent is BareComponent {
         keys[0] = "blockFace";
         values[0] = LibTypes.SchemaValue.UINT8;
 
+        // TODO: find some way to convert the blockType to a uint256 to save space
         keys[1] = "blockType";
-        values[1] = LibTypes.SchemaValue.UINT256;
+        values[1] = LibTypes.SchemaValue.STRING;
     }
 
-    function set(uint256 entity, BlockFace blockFace, uint256 blockType) public {
+    function set(uint256 entity, BlockFace blockFace, string memory blockType) public {
         set(entity, abi.encode(uint8(blockFace), blockType));
     }
 
     function getBlockFace(uint256 entity) public view returns (BlockFace) {
-        (uint8 blockFace, uint256 blockType) = abi.decode(getRawValue(entity), (uint8, uint256));
+        (uint8 blockFace, string memory blockType) = abi.decode(getRawValue(entity), (uint8, string));
         return BlockFace(blockFace);
     }
 
-    function getBlockType(uint256 entity) public view returns (uint256) {
-        (uint8 blockFace, uint256 blockType) = abi.decode(getRawValue(entity), (uint8, uint256));
+    function getBlockType(uint256 entity) public view returns (string memory) {
+        (uint8 blockFace, string memory blockType) = abi.decode(getRawValue(entity), (uint8, string));
         return blockType;
     }
 }

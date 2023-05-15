@@ -22,7 +22,41 @@ const components = {
 const SIMULATOR_API_SERVER = "http://localhost:4500";
 
 // Components expose a stream that triggers when the component is updated.
-components.ActivatedCreationsComponent.update$.subscribe(({ value }) => {
+components.ActivatedCreationsComponent.update$.subscribe(( res ) => {
+  const ownerId = res.entity;
+  const activatedCreations = res.value?.[0]?.value;
+  if(activatedCreations.length === 0) {
+    return;
+  }
+  const activatedCreationId = activatedCreations.at(-1); // right now, we are assuming tha tthe last element in the array is the one they just activated
+  // TODO: get the blocks of the creation
+
+
+  // console.log(value);
+  // console.log(String(value?.[0]?.value));
+  // TODO: for now, you can only activate each creation once
+  const payload = {
+    worldName: 'exampleWorld',
+    ownerPlayerId: ownerId,
+    blocks: [
+      { blockMaterial: 'stone', x: 1, y: 1, z: 1 },
+      { blockMaterial: 'chest', x: -1, y: -1, z: -1 }
+    ],
+    creationId: activatedCreationId,
+  };
+
+  fetch(SIMULATOR_API_SERVER, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  }).then((res) => {
+    console.log(`Simulated creation response=${res}`);
+  }).catch((err) => {
+    console.log(`Cannot simulate creation err=${err}`)
+  });
+
   console.log("activated creations");
   console.log(value);
   fetch(SIMULATOR_API_SERVER).then((res) => {
@@ -43,36 +77,11 @@ components.ActivatedCreationsComponent.update$.subscribe(({ value }) => {
 // This is why if we just want to get the latest value, we use: String(value?.[0]?.value)
 // we don't need faucets to drip cause we are just an observer
 components.BlocksComponent.update$.subscribe(( res ) => {
-  console.log("activated creations");
   const creationId = res.entity;
-  const value = res.value?.[0]?.value;
-  // console.log(value);
-  // console.log(String(value?.[0]?.value));
-  // TODO: for now, you can only activate each creation once
-  const payload = {
-    worldName: 'exampleWorld',
-    ownerPlayerId: '12345',
-    blocks: [
-      { blockMaterial: 'stone', x: 1, y: 1, z: 1 },
-      { blockMaterial: 'chest', x: -1, y: -1, z: -1 }
-    ],
-    creationId: creationId,
-  };
-
-  fetch(SIMULATOR_API_SERVER, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  }).then((res) => {
-    console.log(`Simulated creation response=${res}`);
-  }).catch((err) => {
-    console.log(`Cannot simulate creation err=${err}`)
-  });
+  console.log(`registered creation WITH ID=${creationId}`);
 });
 
-const createOpcBlock = (x:number,y:number,z:number,face:number,type:number):OpcBlockStruct => {
+const createOpcBlock = (x:number,y:number,z:number,face:number,type:string):OpcBlockStruct => {
   return {
     relativeCoord: {
       x: x,
@@ -95,8 +104,8 @@ setupMUDNetwork<typeof components, SystemTypes>(config, world, components, Syste
     startSync();
 
     const blocks = [
-      createOpcBlock(0,0,0, 0,5),
-      createOpcBlock(0,0,1, 0,5),
+      createOpcBlock(0,0,0, 0,"SLIME_BLOCK"),
+      createOpcBlock(0,0,1, 0,"STICKY_PISTON"),
     ];
     // debugger
     // interesting, the systems object is not available until later

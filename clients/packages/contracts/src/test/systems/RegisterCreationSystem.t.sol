@@ -22,7 +22,7 @@ contract RegisterCreationTest is MudTest {
         VoxelCoord memory relativeCoord = VoxelCoord(getRandomNumber(), getRandomNumber(), getRandomNumber());
         BlockFace blockFace = BlockFace.NORTH;
         OpcBlock[] memory opcBlocks = new OpcBlock[](1);
-        opcBlocks[0] = OpcBlock(relativeCoord, blockFace, 2);
+        opcBlocks[0] = OpcBlock(relativeCoord, blockFace, "SLIME_BLOCK");
         uint256 creationEntityId = registerCreationSystem.executeTyped(opcBlocks);
 
         uint256[] memory blocks = blocksComponent.getValue(creationEntityId);
