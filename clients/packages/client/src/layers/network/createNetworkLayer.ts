@@ -302,6 +302,17 @@ export async function createNetworkLayer(config: GameConfig) {
     });
   }
 
+  function registerCreation(){
+    actions.add({
+      id: `registerCreation` as EntityID,
+      metadata: { actionType: "registerCreation" },
+      requirement: () => true,
+      components: {},
+      execute: () => systems["system.RegisterCreation"].executeTyped({ gasLimit: 400_000 }),
+      updates: () => [],
+    });
+  }
+
   function transfer(entity: EntityID, receiver: string) {
     const entityIndex = world.entityToIndex.get(entity);
     if (entityIndex == null) return console.warn("trying to transfer unknown entity", entity);

@@ -3,12 +3,18 @@ import styled from "styled-components";
 import { Button, CloseableContainer, Gold } from "./common";
 
 export const ImportCreation: React.FC<{ onClose: () => void }> = ({ onClose }) => {
+
+  const registerCreation = () => {
+    console.log("register creation");
+  }
+
   return (
     <ImportContainer onClose={onClose}>
       <p>
         <Gold>Import Creation</Gold>
       </p>
       <Buttons>
+        <Button onClick={registerCreation}>Register Creation</Button>
       </Buttons>
     </ImportContainer>
   );
