@@ -4,7 +4,11 @@ import { SystemTypes } from "contracts/types/SystemTypes";
 import { SystemAbis } from "contracts/types/SystemAbis.mjs";
 import {config, getNetworkConfig} from "./config";
 import { defineActivatedCreationsComponent } from "./components/ActivatedCreationsComponent";
-import {OpcBlockStruct, VoxelCoordStruct} from "contracts/types/ethers-contracts/RegisterCreationSystem";
+import {
+  OpcBlockStruct,
+  VoxelCoordStruct,
+  VoxelCoordStructOutput
+} from "contracts/types/ethers-contracts/RegisterCreationSystem";
 import {defineBlocksComponent} from "./components/BlocksComponent";
 
 // The world contains references to all entities, all components and disposers.
@@ -19,18 +23,27 @@ const components = {
   BlocksComponent: defineBlocksComponent(world),
 };
 
+
 const SIMULATOR_API_SERVER = "http://localhost:4500";
 
 // Components expose a stream that triggers when the component is updated.
 components.ActivatedCreationsComponent.update$.subscribe(( res ) => {
   const ownerId = res.entity;
   const activatedCreations = res.value?.[0]?.value;
-  if(activatedCreations.length === 0) {
+  if(!activatedCreations || activatedCreations.length === 0) {
+    console.log("couldn't activate creations since we couldn't find the activated creationId")
     return;
   }
-  const activatedCreationId = activatedCreations.at(-1); // right now, we are assuming tha tthe last element in the array is the one they just activated
+  const activatedCreationId:any = activatedCreations.at(-1); // right now, we are assuming tha tthe last element in the array is the one they just activated
   // TODO: get the blocks of the creation
-
+  // @ts-ignore
+  const creationBlocks = components.BlocksComponent.values[activatedCreationId];
+  console.log("creation blocks");
+  console.log(creationBlocks);
+  for(const block of creationBlocks) {
+    block.blockFace = blockFaceToString(block.blockFace);
+  }
+  console.log(creationBlocks);
 
   // console.log(value);
   // console.log(String(value?.[0]?.value));
@@ -38,32 +51,21 @@ components.ActivatedCreationsComponent.update$.subscribe(( res ) => {
   const payload = {
     worldName: 'exampleWorld',
     ownerPlayerId: ownerId,
-    blocks: [
-      { blockMaterial: 'stone', x: 1, y: 1, z: 1 },
-      { blockMaterial: 'chest', x: -1, y: -1, z: -1 }
-    ],
+    blocks: creationBlocks,
     creationId: activatedCreationId,
   };
 
-  fetch(SIMULATOR_API_SERVER, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  }).then((res) => {
-    console.log(`Simulated creation response=${res}`);
-  }).catch((err) => {
-    console.log(`Cannot simulate creation err=${err}`)
-  });
-
-  console.log("activated creations");
-  console.log(value);
-  fetch(SIMULATOR_API_SERVER).then((res) => {
-    console.log(`Simulated creation response=${res}`);
-  }).catch((err) => {
-    console.log(`Cannot simulate creation err=${err}`)
-  });
+  // fetch(SIMULATOR_API_SERVER, {
+  //   method: 'POST',
+  //   headers: {
+  //     'Content-Type': 'application/json'
+  //   },
+  //   body: JSON.stringify(payload)
+  // }).then((res) => {
+  //   console.log(`Simulated creation response=${res}`);
+  // }).catch((err) => {
+  //   console.log(`Cannot simulate creation err=${err}`)
+  // });
 });
 
 // updates return res, which is: {
@@ -81,7 +83,36 @@ components.BlocksComponent.update$.subscribe(( res ) => {
   console.log(`registered creation WITH ID=${creationId}`);
 });
 
-const createOpcBlock = (x:number,y:number,z:number,face:number,type:string):OpcBlockStruct => {
+// TODO: fix this so it's less sus
+enum BlockFace { // the must be manually kept up-to-date with the solidity enum
+  NORTH,
+  SOUTH,
+  EAST,
+  WEST,
+  UP,
+  DOWN,
+  NONE,
+}
+
+const blockFaceToString = (face:BlockFace):string => {
+  switch(face) {
+    case BlockFace.NORTH:
+      return "NORTH";
+    case BlockFace.SOUTH:
+      return "SOUTH";
+    case BlockFace.EAST:
+      return "EAST";
+    case BlockFace.WEST:
+      return "WEST";
+    case BlockFace.UP:
+      return "UP";
+    case BlockFace.DOWN:
+      return "DOWN";
+    case BlockFace.NONE:
+      return "NONE";
+  }
+}
+const createOpcBlock = (x:number,y:number,z:number, face:BlockFace, material:string):OpcBlockStruct => {
   return {
     relativeCoord: {
       x: x,
@@ -89,7 +120,7 @@ const createOpcBlock = (x:number,y:number,z:number,face:number,type:string):OpcB
       z: z,
     } as VoxelCoordStruct,
     blockFace: face,
-    blockType: type,
+    material: material,
   } as OpcBlockStruct;
 }
 
@@ -104,8 +135,8 @@ setupMUDNetwork<typeof components, SystemTypes>(config, world, components, Syste
     startSync();
 
     const blocks = [
-      createOpcBlock(0,0,0, 0,"SLIME_BLOCK"),
-      createOpcBlock(0,0,1, 0,"STICKY_PISTON"),
+      createOpcBlock(0,0,0, BlockFace.NONE,"SLIME_BLOCK"),
+      createOpcBlock(0,0,1, BlockFace.NORTH, "STICKY_PISTON"),
     ];
     // debugger
     // interesting, the systems object is not available until later
@@ -128,10 +159,16 @@ setupMUDNetwork<typeof components, SystemTypes>(config, world, components, Syste
       });
     }
 
-    // (window as any).activateCreation = () => {
-    //   systems["system.ActivateCreation"].executeTyped(
-    //     blocks,{ gasLimit: 100_000_000 }
-    //   );
-    // }
+    (window as any).activateCreation = () => {
+      systems["system.ActivateCreation"].executeTyped(
+        "asdfasdf",
+        {
+          x:0,
+          y:0,
+          z:0,
+        },
+        { gasLimit: 100_000_000 }
+      );
+    }
   }
 );

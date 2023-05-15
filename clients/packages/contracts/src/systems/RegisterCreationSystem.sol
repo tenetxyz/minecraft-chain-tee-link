@@ -41,7 +41,7 @@ contract RegisterCreationSystem is System {
 
             OpcBlock memory repositionedOpcBlock = repositionedOpcBlocks[i];
             positionComponent.set(blockEntityId, repositionedOpcBlock.relativeCoord);
-            blockMetadataComponent.set(blockEntityId, repositionedOpcBlock.blockFace, repositionedOpcBlock.blockType);
+            blockMetadataComponent.set(blockEntityId, repositionedOpcBlock.blockFace, repositionedOpcBlock.material);
 
             blocksComponent.addBlock(creationEntityId, blockEntityId);
         }
@@ -75,7 +75,7 @@ contract RegisterCreationSystem is System {
         for (uint32 i = 0; i < opcBlocks.length; i++) {
             OpcBlock memory opcBlock = opcBlocks[i];
             VoxelCoord memory newRelativeCoord = VoxelCoord(opcBlock.relativeCoord.x - lowestX, opcBlock.relativeCoord.y - lowestY, opcBlock.relativeCoord.z - lowestZ);
-            repositionedOpcBlocks[i] = OpcBlock(newRelativeCoord, opcBlock.blockFace, opcBlock.blockType);
+            repositionedOpcBlocks[i] = OpcBlock(newRelativeCoord, opcBlock.blockFace, opcBlock.material);
         }
         return repositionedOpcBlocks;
     }

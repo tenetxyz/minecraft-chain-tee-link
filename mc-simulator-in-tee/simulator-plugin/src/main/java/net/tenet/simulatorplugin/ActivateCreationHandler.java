@@ -7,6 +7,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.data.type.Piston;
+import org.bukkit.block.data.type.PistonHead;
 import org.bukkit.plugin.Plugin;
 
 import java.io.BufferedReader;
@@ -110,17 +112,41 @@ class ActivateCreationHandler implements HttpHandler {
         World world = Bukkit.getWorlds().get(0); // Assuming overwriting chunks in the main world
         Bukkit.getScheduler().runTask(pluginReference, () -> {
             for (Block block : creation.blocks) {
-                Material material = Material.matchMaterial(block.blockMaterial);
+                Material material = Material.matchMaterial(block.material);
                 if (material == null) {
-                    throw new IllegalArgumentException("Invalid material " + block.blockMaterial);
+                    throw new IllegalArgumentException("Invalid material " + block.material);
                 }
-                world.getBlockAt(block.x, block.y, block.z).setType(material, true);
+                org.bukkit.block.Block blockInWorld = world.getBlockAt(block.x, block.y, block.z);
+                blockInWorld.setType(material, true);
+                if (material == Material.PISTON) {
+                    ((Piston) blockInWorld).setFacing(stringToBlockFace(block.blockFace));
+                } else if (material == Material.PISTON_HEAD) {
+                    ((PistonHead) blockInWorld).setFacing(stringToBlockFace(block.blockFace));
+                }
             }
         });
     }
 
+    private org.bukkit.block.BlockFace stringToBlockFace(String blockFaceStr) {
+        switch (blockFaceStr) {
+            case "NORTH":
+                return org.bukkit.block.BlockFace.NORTH;
+            case "EAST":
+                return org.bukkit.block.BlockFace.EAST;
+            case "SOUTH":
+                return org.bukkit.block.BlockFace.SOUTH;
+            case "WEST":
+                return org.bukkit.block.BlockFace.WEST;
+            case "UP":
+                return org.bukkit.block.BlockFace.UP;
+            case "DOWN":
+                return org.bukkit.block.BlockFace.DOWN;
+        }
+        throw new IllegalArgumentException("Invalid block face " + blockFaceStr);
+    }
+
     private boolean creationHasStorageBlocks(Creation creation) {
-        return Arrays.stream(creation.blocks).anyMatch(block -> block.blockMaterial.equalsIgnoreCase("chest"));
+        return Arrays.stream(creation.blocks).anyMatch(block -> block.material.equalsIgnoreCase("chest"));
     }
 
     // Why can't we just iterate across all the blocks in the creation and set them to air?
