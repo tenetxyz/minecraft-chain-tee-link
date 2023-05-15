@@ -31,11 +31,41 @@ components.ActivatedCreationsComponent.update$.subscribe(({ value }) => {
     console.log(`Cannot simulate creation err=${err}`)
   });
 });
+
+// updates return res, which is: {
+//   entity: (the entity Id)
+//   value: [new state, old state] (I think it's the old state)
+//   component: (has a reference to all key-> value pairs of that component
+// }
+// where newState and old state is {
+//   value: <value that is mapped to>
+// }
+// This is why if we just want to get the latest value, we use: String(value?.[0]?.value)
 // we don't need faucets to drip cause we are just an observer
-components.BlocksComponent.update$.subscribe(({ value }) => {
+components.BlocksComponent.update$.subscribe(( res ) => {
   console.log("activated creations");
-  console.log(value);
-  fetch(SIMULATOR_API_SERVER).then((res) => {
+  const creationId = res.entity;
+  const value = res.value?.[0]?.value;
+  // console.log(value);
+  // console.log(String(value?.[0]?.value));
+  // TODO: for now, you can only activate each creation once
+  const payload = {
+    worldName: 'exampleWorld',
+    ownerPlayerId: '12345',
+    blocks: [
+      { blockMaterial: 'stone', x: 1, y: 1, z: 1 },
+      { blockMaterial: 'chest', x: -1, y: -1, z: -1 }
+    ],
+    creationId: creationId,
+  };
+
+  fetch(SIMULATOR_API_SERVER, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(payload)
+  }).then((res) => {
     console.log(`Simulated creation response=${res}`);
   }).catch((err) => {
     console.log(`Cannot simulate creation err=${err}`)
@@ -61,13 +91,12 @@ setupMUDNetwork<typeof components, SystemTypes>(config, world, components, Syste
   }).then(
 
   ({ startSync, systems }) => {
-    // why is systems an empty object here?
+    // why is systems an empty object here? It just takes a bit of time to initialize
     startSync();
 
     const blocks = [
       createOpcBlock(0,0,0, 0,5),
-      createOpcBlock(0,1,0, 0,6),
-      createOpcBlock(0,0,4, 0,10),
+      createOpcBlock(0,0,1, 0,5),
     ];
     // debugger
     // interesting, the systems object is not available until later
@@ -77,17 +106,23 @@ setupMUDNetwork<typeof components, SystemTypes>(config, world, components, Syste
         blocks,{ gasLimit: 100_000_000 }
       ).then(res => {
         // this res is a confirmation the contract was sent
-        console.log(`creationId`);
-        console.log(res);
-        res.wait().then((receipt) => {
+        // console.log(`creationId`);
+        // console.log(res);
+        res.wait(3).then((receipt) => {
           // this is the actual result of the contract
-          console.log("receipt");
-          console.log(receipt);
+          // console.log("receipt");
+          // console.log(receipt);
         }).catch(err => {
-          console.log("error!");
-          console.log(err);
+          // console.log("error!");
+          // console.log(err);
         }) ;
       });
     }
+
+    // (window as any).activateCreation = () => {
+    //   systems["system.ActivateCreation"].executeTyped(
+    //     blocks,{ gasLimit: 100_000_000 }
+    //   );
+    // }
   }
 );
