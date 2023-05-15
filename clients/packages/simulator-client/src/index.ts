@@ -67,17 +67,27 @@ setupMUDNetwork<typeof components, SystemTypes>(config, world, components, Syste
     const blocks = [
       createOpcBlock(0,0,0, 0,5),
       createOpcBlock(0,1,0, 0,6),
-      createOpcBlock(0,0,3, 0,10),
+      createOpcBlock(0,0,4, 0,10),
     ];
     // debugger
     // interesting, the systems object is not available until later
 
     (window as any).submitCreation = () => {
-      console.log("register")
-      console.log(systems["system.RegisterCreation"]);
       systems["system.RegisterCreation"].executeTyped(
         blocks,{ gasLimit: 100_000_000 }
-      );
+      ).then(res => {
+        // this res is a confirmation the contract was sent
+        console.log(`creationId`);
+        console.log(res);
+        res.wait().then((receipt) => {
+          // this is the actual result of the contract
+          console.log("receipt");
+          console.log(receipt);
+        }).catch(err => {
+          console.log("error!");
+          console.log(err);
+        }) ;
+      });
     }
   }
 );

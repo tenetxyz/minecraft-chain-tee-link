@@ -23,10 +23,9 @@ contract RegisterCreationTest is MudTest {
         BlockFace blockFace = BlockFace.NORTH;
         OpcBlock[] memory opcBlocks = new OpcBlock[](1);
         opcBlocks[0] = OpcBlock(relativeCoord, blockFace, 2);
-        uint256 creationEntityId = abi.decode(registerCreationSystem.executeTyped(opcBlocks), (uint256));
+        uint256 creationEntityId = registerCreationSystem.executeTyped(opcBlocks);
 
         uint256[] memory blocks = blocksComponent.getValue(creationEntityId);
-//        emit Log(string(abi.encodePacked(blocks[0])));
         assertEq(blocks.length, 1);
         vm.stopPrank();
     }
