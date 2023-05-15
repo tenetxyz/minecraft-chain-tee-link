@@ -19,7 +19,7 @@ export const ImportCreation: React.FC<{ onClose: () => void; api: any }> = ({ on
 
   const registerCreation = () => {
     console.log("register creation");
-    const blocks = [
+    const blocks: OpcBlockStruct[] = [
       createOpcBlock(0,0,0, 0,5),
       createOpcBlock(0,1,0, 0,6),
       createOpcBlock(0,0,3, 0,10),

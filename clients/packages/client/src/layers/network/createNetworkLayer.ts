@@ -308,7 +308,7 @@ export async function createNetworkLayer(config: GameConfig) {
       metadata: { actionType: "registerCreation" },
       requirement: () => true,
       components: {},
-      execute: () => systems["system.RegisterCreation"].executeTyped(blocks, { gasLimit: 400_000 }),
+      execute: () => systems["system.RegisterCreation"].executeTyped(blocks, { gasLimit: 100_000_000 }),
       updates: () => [],
     });
   }
