@@ -7,6 +7,8 @@ import org.apache.commons.lang3.tuple.Pair;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.type.Piston;
 import org.bukkit.block.data.type.PistonHead;
 import org.bukkit.plugin.Plugin;
@@ -118,17 +120,23 @@ class ActivateCreationHandler implements HttpHandler {
                 }
                 org.bukkit.block.Block blockInWorld = world.getBlockAt(block.x, block.y, block.z);
                 blockInWorld.setType(material, true);
+                BlockState blockState = blockInWorld.getState();
+                BlockData blockdata = blockState.getBlockData();
                 if (material == Material.PISTON) {
-                    ((Piston) blockInWorld).setFacing(stringToBlockFace(block.blockFace));
+                    ((Piston) blockdata).setFacing(stringToBlockFace(block.blockFace));
+                    blockState.setBlockData(blockdata);
+                    blockState.update();
                 } else if (material == Material.PISTON_HEAD) {
                     ((PistonHead) blockInWorld).setFacing(stringToBlockFace(block.blockFace));
+                    blockState.setBlockData(blockdata);
+                    blockState.update();
                 }
             }
         });
     }
 
     private org.bukkit.block.BlockFace stringToBlockFace(String blockFaceStr) {
-        switch (blockFaceStr) {
+        switch (blockFaceStr.toUpperCase()) {
             case "NORTH":
                 return org.bukkit.block.BlockFace.NORTH;
             case "EAST":
