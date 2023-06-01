@@ -1,4 +1,4 @@
-# mc-on-chain
+# minecraft-chain-tee-link
 
 This repo demonstrates how we can offload complex computations to an off-chain Trusted Execution Environment (TEE) and write the results back onto the chain… And we’re doing this verifiably!
 
