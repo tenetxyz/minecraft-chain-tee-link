@@ -12,12 +12,12 @@ enum BlockFace { // BlockFace = the face of a block. These enum values were take
   SOUTH,
   EAST,
   WEST,
-  TOP,
-  BOTTOM
+  UP,
+  DOWN
 }
 
 struct OpcBlock { // OpcBlock = OPCraft block. we cannot use the word "Block" since it's a reserved keyword
   VoxelCoord relativeCoord; // these coords are relative to the lower-south-west corner of the creation
   BlockFace blockFace;
-  uint256 blockType; // search for this in the bukkit codebase to find the block type: NORTH((byte)0, (byte)0, (byte)-1, BlockFace.EnumAxis.Z),
+  string material;
 }
